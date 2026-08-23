@@ -39,6 +39,30 @@ export function checkCoverage(rootDir) {
   return findings;
 }
 
+/** Distinct manifest source paths that no longer exist in the handbook checkout. */
+export function checkSourcePaths(rootDir, handbookDir) {
+  const manifest = readManifest(rootDir);
+  const referencedBy = new Map();
+  for (const [file, sources] of Object.entries(manifest.files)) {
+    for (const source of sources) {
+      if (!referencedBy.has(source)) referencedBy.set(source, []);
+      referencedBy.get(source).push(file);
+    }
+  }
+
+  const findings = [];
+  for (const [source, files] of referencedBy) {
+    if (!existsSync(join(handbookDir, source))) {
+      findings.push({
+        file: source,
+        rule: "stale-source",
+        message: `handbook source does not exist, referenced by ${files.sort().join(", ")}`,
+      });
+    }
+  }
+  return findings;
+}
+
 /** Which skill files derive from handbook sources changed since the pinned SHA. */
 export function reportDrift(rootDir, handbookDir) {
   const manifest = readManifest(rootDir);
@@ -73,6 +97,9 @@ if (import.meta.filename === realpathSync(process.argv[1])) {
       console.error("--handbook needs a path to a handbook checkout; skipping drift report.");
       process.exit(1);
     }
+    const staleSources = checkSourcePaths(root, handbook);
+    for (const { file, rule, message } of staleSources) console.error(`${file}: [${rule}] ${message}`);
+
     const drifted = reportDrift(root, handbook);
     if (drifted.length === 0) {
       console.log("check-sources: no upstream drift since the pinned SHA.");
@@ -83,6 +110,11 @@ if (import.meta.filename === realpathSync(process.argv[1])) {
         for (const source of changedSources) console.log(`    <- ${source}`);
       }
       console.log("\nThese need rewriting by hand. Nothing was changed.");
+    }
+
+    if (staleSources.length > 0) {
+      console.error(`\n${staleSources.length} stale source path(s).`);
+      process.exit(1);
     }
   }
 }

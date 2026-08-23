@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { checkCoverage } from "../scripts/check-sources.mjs";
+import { checkCoverage, checkSourcePaths } from "../scripts/check-sources.mjs";
 
 function scratch(manifest, skillFiles) {
   const root = mkdtempSync(join(tmpdir(), "skills-"));
@@ -12,6 +12,15 @@ function scratch(manifest, skillFiles) {
     writeFileSync(join(root, path), body);
   }
   writeFileSync(join(root, "sources.json"), JSON.stringify(manifest));
+  return root;
+}
+
+function scratchHandbook(files) {
+  const root = mkdtempSync(join(tmpdir(), "handbook-"));
+  for (const [path, body] of Object.entries(files)) {
+    mkdirSync(join(root, path, ".."), { recursive: true });
+    writeFileSync(join(root, path), body);
+  }
   return root;
 }
 
@@ -50,4 +59,34 @@ test("flags an entry with an empty source list", () => {
   const findings = checkCoverage(root);
   assert.equal(findings.length, 1);
   assert.equal(findings[0].rule, "manifest");
+});
+
+test("flags a manifest source path that does not exist in the handbook checkout", () => {
+  const root = scratch(manifest({ "skills/a/SKILL.md": ["missing.mdx"] }), {
+    "skills/a/SKILL.md": "body",
+  });
+  const handbook = scratchHandbook({});
+  const findings = checkSourcePaths(root, handbook);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].rule, "stale-source");
+});
+
+test("a manifest whose source paths all exist in the handbook checkout produces no findings", () => {
+  const root = scratch(manifest({ "skills/a/SKILL.md": ["present.mdx"] }), {
+    "skills/a/SKILL.md": "body",
+  });
+  const handbook = scratchHandbook({ "present.mdx": "body" });
+  assert.deepEqual(checkSourcePaths(root, handbook), []);
+});
+
+test("flags only the missing path when one of two source paths exists", () => {
+  const root = scratch(
+    manifest({ "skills/a/SKILL.md": ["present.mdx"], "skills/b/SKILL.md": ["missing.mdx"] }),
+    { "skills/a/SKILL.md": "body", "skills/b/SKILL.md": "body" },
+  );
+  const handbook = scratchHandbook({ "present.mdx": "body" });
+  const findings = checkSourcePaths(root, handbook);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].rule, "stale-source");
+  assert.match(findings[0].file, /missing\.mdx/);
 });
