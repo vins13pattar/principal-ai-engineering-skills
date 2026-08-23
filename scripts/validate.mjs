@@ -5,6 +5,13 @@ import { parseFrontmatter } from "./frontmatter.mjs";
 
 const NAME = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const LINK = /\[[^\]]*\]\(([^)]+)\)/g;
+// Link-reference definitions: `[label]: target` optionally followed by a
+// "title", 'title', or (title) — e.g. `[1]: references/notes.md "See also"`.
+const REF_DEF = /^[ \t]{0,3}\[[^\]]+\]:\s*(\S+)(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*$/gm;
+// Fenced code blocks: ``` or ~~~, any info string, through the matching
+// closing fence of the same character. Content inside is illustrative
+// markdown, not real links, and must not be scanned.
+const FENCE = /^([ \t]*)(`{3,}|~{3,})[^\n]*\n[\s\S]*?^\2[ \t]*$/gm;
 const SKILL_MAX_LINES = 200;
 const REFERENCE_MAX_LINES = 300;
 const DESCRIPTION_MAX = 500;
@@ -21,14 +28,26 @@ function markdownFilesIn(dir) {
     });
 }
 
+function stripFencedCode(text) {
+  return text.replace(FENCE, "");
+}
+
+function checkLinkTarget(file, target, findings) {
+  if (/^(https?:|mailto:|#)/.test(target)) return;
+  const [path] = target.split("#");
+  if (path === "") return;
+  if (!existsSync(resolve(dirname(file), path))) {
+    findings.push({ file, rule: "link", message: `link target does not exist: ${target}` });
+  }
+}
+
 function checkLinks(file, text, findings) {
-  for (const [, target] of text.matchAll(LINK)) {
-    if (/^(https?:|mailto:|#)/.test(target)) continue;
-    const [path] = target.split("#");
-    if (path === "") continue;
-    if (!existsSync(resolve(dirname(file), path))) {
-      findings.push({ file, rule: "link", message: `link target does not exist: ${target}` });
-    }
+  const scannable = stripFencedCode(text);
+  for (const [, target] of scannable.matchAll(LINK)) {
+    checkLinkTarget(file, target, findings);
+  }
+  for (const [, target] of scannable.matchAll(REF_DEF)) {
+    checkLinkTarget(file, target, findings);
   }
 }
 

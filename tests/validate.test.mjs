@@ -36,3 +36,21 @@ test("ignores external and anchor links", () => {
   // exists on disk; a checker that resolved them would report two findings.
   assert.deepEqual(validateSkills(fixture("good")), []);
 });
+
+test("ignores a broken-looking link inside a fenced code block", () => {
+  // The fixture's fence contains [fake](references/not-real.md) as illustrative
+  // markdown syntax, not a real link. A checker that scanned fenced code would
+  // report a finding here.
+  assert.deepEqual(validateSkills(fixture("fenced-code-link")), []);
+});
+
+test("flags a reference-style link definition that resolves to nothing", () => {
+  const findings = validateSkills(fixture("bad-ref-link"));
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].rule, "link");
+  assert.match(findings[0].message, /references\/missing-ref\.md/);
+});
+
+test("accepts a reference-style link definition that resolves correctly", () => {
+  assert.deepEqual(validateSkills(fixture("good-ref-link")), []);
+});
