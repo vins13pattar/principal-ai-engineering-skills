@@ -1,6 +1,6 @@
 {
   "handbookRepo": "https://github.com/vins13pattar/principal-ai-engineer-handbook",
-  "handbookSha": "8f30ab3c4525a539bbaca4f0ec6a03601760729e",
+  "handbookSha": "f855322",
   "files": {
     "skills/agent-systems/SKILL.md": [
       "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
