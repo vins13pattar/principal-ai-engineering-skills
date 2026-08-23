@@ -89,6 +89,59 @@
       "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx",
       "apps/handbook/src/content/docs/learn/modules/08-rag.mdx",
       "apps/handbook/src/content/docs/reference/lookups/vector-db.mdx"
+    ],
+    "skills/agent-authorization/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",
+      "apps/handbook/src/content/docs/learn/modules/15-agent-identity.mdx",
+      "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.mdx",
+      "apps/handbook/src/content/docs/build/labs/agent-identity-broker.mdx",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/gateway.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/registry.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/models.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/rate_limit.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/approval.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/audit.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/scope.py",
+      "labs/agent-identity-broker/src/agent_identity/broker.py",
+      "labs/agent-identity-broker/src/agent_identity/resource_server.py",
+      "labs/agent-identity-broker/src/agent_identity/claims.py"
+    ],
+    "skills/agent-authorization/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",
+      "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.mdx",
+      "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.enforcement-pipeline.mmd",
+      "apps/handbook/src/content/docs/build/labs/agent-identity-broker.mdx",
+      "apps/handbook/src/content/docs/build/labs/agent-identity-broker.exchange-path.mmd",
+      "apps/handbook/src/content/docs/learn/modules/15-agent-identity.mdx",
+      "apps/handbook/src/content/docs/learn/modules/15-agent-identity.token-exchange.mmd",
+      "labs/agent-identity-broker/src/agent_identity/blast_radius.py",
+      "labs/agent-identity-broker/src/agent_identity/demo.py"
+    ],
+    "skills/agent-authorization/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",
+      "apps/handbook/src/content/docs/learn/modules/15-agent-identity.mdx",
+      "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.mdx",
+      "apps/handbook/src/content/docs/build/labs/agent-identity-broker.mdx",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/audit.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/rate_limit.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/models.py"
+    ],
+    "skills/agent-authorization/references/patterns.md": [
+      "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.mdx",
+      "apps/handbook/src/content/docs/build/labs/agent-identity-broker.mdx",
+      "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/gateway.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/registry.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/demo.py",
+      "labs/agent-identity-broker/src/agent_identity/resource_server.py",
+      "labs/agent-identity-broker/src/agent_identity/broker.py",
+      "labs/agent-identity-broker/src/agent_identity/claims.py"
+    ],
+    "skills/agent-authorization/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",
+      "apps/handbook/src/content/docs/learn/modules/15-agent-identity.mdx",
+      "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.mdx",
+      "apps/handbook/src/content/docs/build/labs/agent-identity-broker.mdx"
     ]
   }
 }
