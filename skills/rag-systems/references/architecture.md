@@ -99,8 +99,10 @@ runtime symptom when it breaks.
 - **The two indexes grow on different curves** — inverted index size tracks
   vocabulary, vector index tracks chunk count times dimensionality — so they
   hit their limits at different times.
-- **Cost and capacity track vectors, not documents.** A chunking change that
-  triples chunk count triples the bill with no new content.
+- **Cost tracks vectors, dimensions, and replicas — not documents.** All three
+  multiply: a chunking change that triples chunk count triples the bill with no
+  new content, a higher-dimensional embedding model raises the per-vector cost
+  across the whole corpus, and every replica pays both again.
 
 ## Security
 
@@ -181,4 +183,4 @@ adding latency proportional to candidate-set size. The two-stage design exists
 to make that affordable; the tuning question is candidate-set size, not whether
 to rerank.
 
-**Source:** [Architecture: Enterprise RAG Platform](https://handbook.vinodspattar.in/architecture/systems/enterprise-rag-platform/), [Module 8: RAG](https://handbook.vinodspattar.in/learn/modules/08-rag/), [Vector DB](https://handbook.vinodspattar.in/reference/lookups/vector-db/)
+**Source:** [Architecture: Enterprise RAG Platform](https://handbook.vinodspattar.in/architecture/systems/enterprise-rag-platform/), [Module 8: RAG](https://handbook.vinodspattar.in/learn/modules/08-rag/), [Lab: Hybrid Retrieval and Evaluation](https://handbook.vinodspattar.in/build/labs/hybrid-retrieval/) (the retrieval-pipeline diagram, which supplied the request flow), [Vector DB](https://handbook.vinodspattar.in/reference/lookups/vector-db/)

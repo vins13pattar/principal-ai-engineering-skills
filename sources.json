@@ -31,6 +31,7 @@
     ],
     "skills/rag-systems/references/architecture.md": [
       "apps/handbook/src/content/docs/architecture/systems/enterprise-rag-platform.mdx",
+      "apps/handbook/src/content/docs/build/labs/hybrid-retrieval.mdx",
       "apps/handbook/src/content/docs/build/labs/hybrid-retrieval.retrieval-pipeline.mmd",
       "apps/handbook/src/content/docs/learn/modules/08-rag.mdx",
       "apps/handbook/src/content/docs/reference/lookups/vector-db.mdx"
@@ -43,6 +44,7 @@
     "skills/rag-systems/references/patterns.md": [
       "apps/handbook/src/content/docs/build/labs/hybrid-retrieval.mdx",
       "apps/handbook/src/content/docs/learn/modules/08-rag.mdx",
+      "labs/hybrid-retrieval/src/retrieval/chunking.py",
       "labs/hybrid-retrieval/src/retrieval/fusion.py",
       "labs/hybrid-retrieval/src/retrieval/groundedness.py",
       "labs/hybrid-retrieval/src/retrieval/evaluation.py"
@@ -50,6 +52,7 @@
     "skills/rag-systems/references/review-checklist.md": [
       "apps/handbook/src/content/docs/architecture/systems/enterprise-rag-platform.mdx",
       "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx",
+      "apps/handbook/src/content/docs/learn/modules/08-rag.mdx",
       "apps/handbook/src/content/docs/reference/lookups/vector-db.mdx"
     ]
   }

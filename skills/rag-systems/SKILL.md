@@ -56,8 +56,10 @@ at since it was written.
     and test it end to end.** A deleted document still in a vector index is
     still retrievable and still citable — a compliance breach, not a quality
     dip.
-12. **Treat retrieved text as untrusted input.** A corpus anyone can write to
-    is an injection channel that arrives in an authoritative tone.
+12. **Delimit retrieved chunks in the prompt and label them with their
+    provenance.** Text interpolated straight into a system prompt is
+    indistinguishable from the instructions you wrote, so a corpus anyone can
+    write to becomes an instruction channel.
 
 ## Deciding
 
@@ -67,7 +69,7 @@ at since it was written.
 | A cross-tenant leak would not be survivable | Separate index per tenant | A metadata filter is one missing predicate away from a breach; separate indexes are not |
 | Tenancy is a label on a shared corpus | Metadata filter, passed as a required argument | Cheaper to operate, and "required argument" is what keeps it honest |
 | Query is an error code, SKU, or function name | Keep the lexical path in the mix | Semantic search cannot find an exact identifier. Wrong index, not a tuning problem |
-| Changing embedding model, chunk size, or splitter | Plan a dual-index migration and a full reindex | Re-chunking means re-embedding; the two vector spaces cannot be mixed |
+| Changing the embedding model, chunk size, or splitter | Full reindex — and for a model change, a dual-index cutover | A model change makes old and new vectors incomparable, so the spaces cannot be mixed even briefly. A chunking change re-embeds into the *same* space, but renumbers every chunk and moves the vector count the bill tracks |
 | End-to-end answers are poor | Score retrieval separately before touching the prompt | Strong recall with bad answers and weak recall with bad answers have opposite fixes |
 
 ## Going deeper

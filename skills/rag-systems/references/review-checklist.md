@@ -2,8 +2,11 @@
 
 Ordered by what it costs to fix later, not by where it appears in the file.
 Chunking and embedding choices head the list because reversing either means
-re-processing the whole corpus. Stop at the first failing answer — the checks
-below it are often downstream of it.
+re-processing the whole corpus; cost and observability come last but always.
+Stop and comment at the first failing answer in the first two sections — the
+checks below it there are usually downstream of it. The last two sections are
+grouped by topic rather than ranked, and every one of them is worth asking
+regardless of what failed above.
 
 ## The four that find the most
 
@@ -73,10 +76,13 @@ below it are often downstream of it.
 
 ## Cost — last but always
 
-12. **Would this change multiply chunk count?** *Failing answer:* a smaller
-    chunk size or added overlap shipped without a note on index size. Cost and
-    capacity track vectors, not documents, so tripling chunk count triples the
-    bill with no new content.
+12. **Would this change multiply chunk count, dimensions, or replicas?**
+    *Failing answer:* a smaller chunk size, added overlap, a
+    higher-dimensional embedding model, or an added replica shipped without a
+    note on index size. Cost tracks those three multiplied together, not
+    documents, so tripling chunk count triples the bill with no new content —
+    and a model swap can raise the per-vector cost across the whole corpus at
+    the same time.
 
 13. **How many chunks reach the model, and was that number chosen?**
     *Failing answer:* `final_k` left at whatever the tutorial used. Retrieved
@@ -103,4 +109,4 @@ below it are often downstream of it.
     no such metric. An ACL change then moves retrieval quality with no change to
     retrieval code, and nothing connects the two.
 
-**Source:** [Architecture: Enterprise RAG Platform](https://handbook.vinodspattar.in/architecture/systems/enterprise-rag-platform/), [Module 8: RAG](https://handbook.vinodspattar.in/learn/modules/08-rag/), [Vector DB](https://handbook.vinodspattar.in/reference/lookups/vector-db/)
+**Source:** [Architecture: Enterprise RAG Platform](https://handbook.vinodspattar.in/architecture/systems/enterprise-rag-platform/), [Module 8: RAG](https://handbook.vinodspattar.in/learn/modules/08-rag/), [Vector DB](https://handbook.vinodspattar.in/reference/lookups/vector-db/), [Cheat Sheet: Design Review](https://handbook.vinodspattar.in/cheatsheets/sheets/design-review/)
