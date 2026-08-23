@@ -83,9 +83,22 @@ class RedisTenantQuota:
 ```
 
 Three things are easy to get wrong here. `now` is passed **in** rather than read
-inside the script, because Redis scripts must be deterministic for replication —
-and it means every replica's clock now affects the bucket, so keep them in NTP
-sync. The `EXPIRE` on **both** branches is what stops the keyspace growing one
+inside the script, and the consequence is that every replica's clock now feeds a
+shared bucket — so they must be NTP-synced, and a skewed replica grants or
+withholds tokens for everyone. (Historically this was forced: under command
+replication scripts had to be deterministic. Since Redis 5, effect replication
+is the default and a script may read `TIME` — but passing the timestamp in
+remains the better choice, because it keeps the clock an explicit input you can
+stub in a test.)
+
+Note this inverts the rule from the previous section. In-process, `time.time()`
+is a bug and `time.monotonic()` is the fix; here `time.time()` is correct.
+Monotonic clocks are per-process — the origin is arbitrary and differs between
+replicas and across restarts — so a monotonic reading is meaningless as shared
+state. Shared buckets need a shared epoch, which means wall clock plus the NTP
+discipline to make it trustworthy.
+
+The `EXPIRE` on **both** branches is what stops the keyspace growing one
 entry per tenant forever; a TTL of roughly twice the full-refill time is long
 enough that an active tenant's state is never dropped mid-window. And the state
 is written on the rejected path too, so a rejected request still advances
@@ -141,9 +154,14 @@ is checked *before* the slot, so a rate-limited tenant never occupies capacity.
 same budget — Rule 2 in eight lines. Backoff is `random.uniform(0, exponential)`
 (full jitter, not `exponential + jitter`): the point is to decorrelate a fleet
 of retrying clients, and sleeping the full interval plus noise leaves them
-synchronised. The re-raise when `provider_name is not None` is Rule 6 — an
-explicitly named provider is retried but never swapped. And `release()` sits in
-`finally`, outside the timeout, so a cancelled request returns its slot.
+synchronised. The re-raise when `provider_name is not None` is Rule 6, and read
+it precisely: a named provider gets **zero** retries, not retries without
+swapping. That is the design decision, and it is worth making deliberately —
+re-selection is the only retry mechanism wired in here, so retrying a named
+provider would mean hammering the one endpoint you already know just failed. If
+you want a named provider retried in place, that is a second, narrower backoff
+path you have to write. And `release()` sits in `finally`, outside the timeout,
+so a cancelled request returns its slot.
 
 Deliberately omitted: the retry predicate is narrower than production needs —
 add HTTP 429 and 5xx, and never retry a 4xx.
@@ -170,6 +188,12 @@ async def allow(self) -> None:
         await self._probe_lock.acquire()
         self._state = CircuitState.HALF_OPEN
 
+def record_success(self) -> None:
+    self._failures = 0
+    self._state = CircuitState.CLOSED
+    if self._probe_lock.locked():
+        self._probe_lock.release()
+
 def record_failure(self) -> None:
     self._failures += 1
     if self._failures >= self.failure_threshold or self._state is CircuitState.HALF_OPEN:
@@ -186,6 +210,14 @@ sawtooth. `locked()` admits exactly one trial request and rejects the rest as
 still-open. Note also that a single failure in half-open reopens the circuit
 (the `or` in `record_failure`), rather than counting up to the threshold again:
 the probe already told you the answer.
+
+**Both outcome methods must release the probe lock, and that is the line people
+drop.** `record_success` is doing three jobs — reset the failure count, close
+the circuit, release the lock — and it is easy to read as bookkeeping and omit.
+Without it the probe succeeds, the lock is never released, and every subsequent
+`allow` raises "probing recovery" forever: a healthy provider blackholed
+permanently by its own recovery. Wire both calls into the caller's `try`/`except`
+before you trust the breaker.
 
 Deliberately omitted: the state is per-process. Across replicas each opens its
 own circuit, which is usually acceptable — every replica learns within its own

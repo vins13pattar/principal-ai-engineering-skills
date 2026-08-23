@@ -97,12 +97,10 @@ understood the design.
   left to the caller's honesty. The same policy object is the natural place to
   cap the caller-supplied timeout — otherwise a client can hold a concurrency
   slot for as long as it likes by asking for a long deadline.
-- Secrets (signing keys, Redis credentials, provider API keys) injected at
-  runtime from a secrets manager. Rotate on a schedule.
-- Redis authenticated and encrypted in transit. It holds quota state and
-  credentials, which makes it part of the security boundary, not a cache.
-- Emit audit events for policy denials and privileged provider selection, so
-  "who was denied what, and why" is answerable after the fact.
+- **Treat the quota store as inside the security boundary, not as a cache.** It
+  holds tenant quota state, so an attacker with write access to it has an
+  unmetered budget — which is what decides that it gets the same credential
+  handling, transport encryption, and rotation schedule as the provider API keys.
 
 ## Cost
 
@@ -114,12 +112,15 @@ understood the design.
 - **Detect client disconnects on streams.** A closed connection while the
   gateway keeps pulling tokens is pure waste, and it is invisible in
   completion-rate metrics.
-- **Cost per correct answer is a trap metric for routing decisions.** Measured
-  on a fixed workload, escalating from a cheap model to an expensive one when
-  the cheap one looks unsure raised accuracy 19% and made cost per correct
-  answer 11x *worse* — and the relationship held at 75x, 10x, 5x, and 2x price
-  ratios. The arithmetic is the cause: a cheap model already right most of the
-  time contributes many cheap correct answers, so the average can only move up.
+- **Cost per correct answer is a trap metric for routing decisions.** In a
+  200-task simulation — no model called, correctness from a seeded hash, fixture
+  prices chosen for their relative ordering rather than any vendor's — escalating
+  from a cheap model to an expensive one when the cheap one looked unsure raised
+  accuracy 19% and made cost per correct answer 11x *worse*, and the direction
+  held at 75x, 10x, 5x, and 2x price ratios. Treat the magnitudes as fixtures;
+  the direction is what transfers, because the arithmetic is the cause: a cheap
+  model already right most of the time contributes many cheap correct answers,
+  so the average can only move up.
   The number that actually decides is the **marginal cost per rescued answer**,
   `(escalated_cost - baseline_cost) / (escalated_correct - baseline_correct)`,
   weighed against what a wrong answer costs you — a product question the router
