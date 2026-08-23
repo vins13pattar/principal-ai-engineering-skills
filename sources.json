@@ -104,7 +104,9 @@
       "labs/policy-gated-tool-runtime/src/tool_gateway/scope.py",
       "labs/agent-identity-broker/src/agent_identity/broker.py",
       "labs/agent-identity-broker/src/agent_identity/resource_server.py",
-      "labs/agent-identity-broker/src/agent_identity/claims.py"
+      "labs/agent-identity-broker/src/agent_identity/claims.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/errors.py",
+      "labs/agent-identity-broker/src/agent_identity/errors.py"
     ],
     "skills/agent-authorization/references/architecture.md": [
       "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",
@@ -135,7 +137,9 @@
       "labs/policy-gated-tool-runtime/src/tool_gateway/demo.py",
       "labs/agent-identity-broker/src/agent_identity/resource_server.py",
       "labs/agent-identity-broker/src/agent_identity/broker.py",
-      "labs/agent-identity-broker/src/agent_identity/claims.py"
+      "labs/agent-identity-broker/src/agent_identity/claims.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/errors.py",
+      "labs/agent-identity-broker/src/agent_identity/errors.py"
     ],
     "skills/agent-authorization/references/review-checklist.md": [
       "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",

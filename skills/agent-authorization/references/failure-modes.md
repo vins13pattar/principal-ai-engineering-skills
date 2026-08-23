@@ -52,6 +52,15 @@ standing between a supplier's edit and your agent's behaviour. A registration
 path that accepts a third-party description and immediately serves it is a
 remote-write into your prompt.
 
+Then bound what a poisoned description can achieve, which is the part that
+actually holds. A description can only change what the model *asks for*; it
+cannot grant anything. So the review question is whether any control is
+description-derived: a scope granted by tool name, a schema held by the
+registry, and a risk level declared with the tool are all immune to a supplier
+editing prose. A gate that reads "requires approval" out of the description, or
+a scope inferred from what a tool says it does, hands the attacker the control
+along with the text.
+
 ## Approval with no timeout
 
 **Presents as:** a backend outage. Requests accumulate holding connections and
@@ -84,16 +93,19 @@ a fund-moving write drawing on the same allowance means read traffic can
 exhaust what was protecting the dangerous call — and, worse, raising the limit
 to accommodate reads quietly raises it for refunds. There is a quieter version
 of the same mistake in the key rather than the capacity: a scope checked on the
-agent and a bucket keyed on the tenant means one agent's usage rate-limits its
-sibling. The agent you throttled is not the agent that misbehaved, and the
+agent and a bucket keyed only on the tenant means one agent's usage rate-limits
+its sibling. The agent you throttled is not the agent that misbehaved, and the
 audit log — keyed on the agent — will not explain why.
 
-**Do:** give each tool its own capacity, declared with the tool, and key the
-limiter on the same principal the scope check used, plus the tool. Where the
-two must differ, make it a deliberate decision rather than an artefact of which
-field was nearest. In more than one replica, the bucket has to be shared atomic
-state; in-process buckets multiply every limit by the replica count, which
-means the number in the config was never the limit.
+**Do:** give each tool its own capacity, declared with the tool, and make the
+key include the tool and the principal whose scopes were checked. Additive, not
+substitutive: the tenant tier is doing real work — it is what stops one tenant
+drawing on another's bucket — so `(tenant, agent, tool)` is the shape that buys
+both, and dropping the tenant to add the agent trades one unfairness for
+another. Agents inside a tenant contending is a legitimate choice; it is only a
+defect when nobody noticed the two keys differ. In more than one replica the
+bucket has to be shared atomic state; in-process buckets multiply every limit
+by the replica count, which means the number in the config was never the limit.
 
 ## An audit log that records only successes
 

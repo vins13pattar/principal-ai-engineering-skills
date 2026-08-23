@@ -80,10 +80,15 @@ grouped by topic and every question in them is worth asking regardless.
 10. **What key does the rate limiter use, and where does the bucket live?**
     *Failing answer:* a budget shared across tools, so read traffic can exhaust
     the allowance protecting an irreversible call and raising the limit for
-    reads raises it for refunds. Also failing quietly: a scope checked on the
-    agent against a bucket keyed on the tenant, which throttles one agent for
-    its sibling's behaviour. And an in-process bucket multiplies every
-    configured limit by the replica count.
+    reads raises it for refunds. Also failing: an in-process bucket, which
+    multiplies every configured limit by the replica count. A tenant tier in
+    the key is *not* a defect — it is what stops one tenant drawing on
+    another's bucket. What is worth raising is a key that omits the principal
+    whose scopes were checked: `(tenant, tool)` while scope is checked on the
+    agent throttles one agent for its sibling's behaviour, and the audit log,
+    keyed on the agent, will not explain why. Ask whether agents inside a
+    tenant are meant to contend. If the answer is no, the fix is to add the
+    agent to the key, not to remove the tenant.
 
 11. **Does the policy store's unavailability have a per-tool answer?**
     *Failing answer:* one global setting, either way. Irreversible tools fail
@@ -92,10 +97,15 @@ grouped by topic and every question in them is worth asking regardless.
 
 12. **Where do tool descriptions come from, and what happens when one
     changes?** *Failing answer:* a third-party description served straight into
-    the model's context, refreshed silently. It is prompt injection arriving
+    the model's context and refreshed silently. It is prompt injection arriving
     through metadata, past every filter aimed at the user's message. Look for a
-    hash pinned at registration and a change that requires the same review a
-    code change gets.
+    hash pinned at registration and a change that needs the same review a code
+    change gets. Then check the containment, which is the half that actually
+    holds: is any control description-derived? A scope granted by tool name, a
+    schema held by the registry, and a risk level declared on the spec all
+    survive a supplier rewriting prose. A gate that reads "requires approval"
+    out of description text, or a permission inferred from what a tool claims
+    to do, hands the attacker the control along with the words.
 
 ## Audit — last but always
 

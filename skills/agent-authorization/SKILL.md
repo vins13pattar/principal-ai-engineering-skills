@@ -39,15 +39,19 @@ runtime holds the contract, or nothing does.
    a scope check says otherwise — the listing decides what the model knows
    about, the scope check decides what runs. Two different questions, two
    different code paths, and only one of them is a control.
-4. **Validate before spending quota; key the limiter on the same principal the
-   scope check used, and on the tool.** Inverting the first lets a malformed
-   call burn a well-behaved caller's budget. The second is quieter: a scope
-   checked on `agent_id` against a bucket keyed on `(tenant, tool)` means one
-   agent's usage rate-limits its sibling, and the agent you throttled is not
-   the one that misbehaved. Dropping the tool from the key is the loud version
-   — a cheap read and an irreversible write on one budget means read traffic
-   exhausts the allowance protecting the dangerous call, and raising the limit
-   for reads quietly raises it for refunds.
+4. **Validate before spending quota, and make the limiter's key include the
+   tool and the principal whose scopes you checked.** Inverting the first lets
+   a malformed call burn a well-behaved caller's budget. Dropping the tool from
+   the key is the loud failure — a cheap read and an irreversible write on one
+   budget means read traffic exhausts the allowance protecting the dangerous
+   call, and raising the limit for reads quietly raises it for refunds. The
+   principal is additive, not a substitution: a tenant in the key is doing real
+   work, stopping one tenant drawing on another's bucket, but `(tenant, tool)`
+   alone while scope is checked on `agent_id` means one agent's usage
+   rate-limits its sibling and the agent you throttled is not the one that
+   misbehaved. `(tenant, agent, tool)` buys both; keeping the tenant tier alone
+   is defensible if you have decided that agents inside a tenant should
+   contend, and indefensible if nobody noticed the two keys differ.
 5. **Bound every approval wait and name the timeout's outcome per tool.**
    `await event.wait()` with no timeout around it is an availability bug
    wearing a security hat: the wait becomes bounded by human presence, and the
@@ -97,7 +101,7 @@ runtime holds the contract, or nothing does.
 | The policy store is unavailable | Decide per tool: irreversible tools fail closed, read-only tools may fail open with loud alerting | A single global answer is the sign of a policy nobody designed. Closed turns a store outage into an agent outage; open turns it into a silent authorization bypass, which is only survivable where the blast radius is a read |
 | An approval times out | Deny, unless the escalation target is genuinely more available | Denial is safe and makes operator unavailability visible to the user. Escalation keeps the request alive and extends the wait, so it buys nothing against a rota that is asleep. The wrong answer is no timeout, which converts a policy decision into a hang |
 | Grants are multiplying past what per-tool entries can carry | Roles composed of explicit tool grants | Keeps "which tools does this role open" answerable by reading it, which is what opaque role labels lose — and that is exactly the question an audit asks. Per-tool grants stay more precise and stop scaling |
-| Calls can arrive by more than one path | Enforce inside the tool runtime | "Enforce in the runtime, not at the protocol boundary" — a protocol gateway is easier to deploy in front of servers you do not own and is bypassed by any path that does not traverse it. Runtime enforcement also survives a protocol revision, which MCP has already spent |
+| Calls can arrive by more than one path | Enforce inside the tool runtime, not at a protocol gateway | A gateway is easier to deploy in front of servers you do not own, and is bypassed by any path that does not traverse it. Runtime enforcement also survives a protocol revision, which MCP has already spent — none of these checks was ever a protocol concern |
 | An agent needs several services on a user's behalf | One exchanged token per service, audience-bound and scope-narrowed, minutes long | "Narrow scope at the exchange, not only audience" — measured on the identity lab's six-tool fixture fleet, one audience plus one scope opens 1 tool; the same audience with the user's full scope set opens 2, the refund among them. Forwarding the user's token is free, and prohibited outright toward an MCP server |
 | A long task outlives its token | Refresh ahead of expiry and make mid-task expiry a handled path | Extending the lifetime to cover the task is the change that undoes the control. Discovering expiry through a `401` mid-call costs a failed call plus a retry, and that retry has to be safe to make |
 
