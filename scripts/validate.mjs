@@ -8,10 +8,10 @@ const LINK = /\[[^\]]*\]\(([^)]+)\)/g;
 // Link-reference definitions: `[label]: target` optionally followed by a
 // "title", 'title', or (title) — e.g. `[1]: references/notes.md "See also"`.
 const REF_DEF = /^[ \t]{0,3}\[[^\]]+\]:\s*(\S+)(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*$/gm;
-// Fenced code blocks: ``` or ~~~, any info string, through the matching
-// closing fence of the same character. Content inside is illustrative
-// markdown, not real links, and must not be scanned.
-const FENCE = /^([ \t]*)(`{3,}|~{3,})[^\n]*\n[\s\S]*?^\2[ \t]*$/gm;
+// A line that, after at most 3 leading spaces, is a run of 3+ backticks or
+// tildes — a candidate fence opener or closer. `rest` is whatever follows the
+// run (an info string on an opener; must be blank on a closer).
+const FENCE_MARK = /^ {0,3}(`{3,}|~{3,})(.*)$/;
 const SKILL_MAX_LINES = 200;
 const REFERENCE_MAX_LINES = 300;
 const DESCRIPTION_MAX = 500;
@@ -28,8 +28,39 @@ function markdownFilesIn(dir) {
     });
 }
 
+function fenceMark(line) {
+  const match = FENCE_MARK.exec(line);
+  if (!match) return null;
+  return { char: match[1][0], length: match[1].length, rest: match[2] };
+}
+
+// Fence rules are stateful (CommonMark), not a single regex: walk the lines
+// once, tracking whether we are inside a fence. A line opens a fence when it
+// is a fence mark and we are not already inside one; while inside, only a
+// mark with the SAME character and a run at least as long, with nothing but
+// the mark on the line, closes it. An opener with an info string still opens;
+// a closer may not carry one. If the file ends while still open, everything
+// to EOF stays inside. In-fence lines (including the delimiters themselves)
+// are replaced with blank lines so line-based logic elsewhere is unaffected.
 function stripFencedCode(text) {
-  return text.replace(FENCE, "");
+  let inFence = false;
+  let fenceChar = "";
+  let fenceLength = 0;
+  const lines = text.split("\n").map((line) => {
+    const mark = fenceMark(line);
+    if (!inFence) {
+      if (!mark) return line;
+      inFence = true;
+      fenceChar = mark.char;
+      fenceLength = mark.length;
+      return "";
+    }
+    if (mark && mark.char === fenceChar && mark.length >= fenceLength && mark.rest.trim() === "") {
+      inFence = false;
+    }
+    return "";
+  });
+  return lines.join("\n");
 }
 
 function checkLinkTarget(file, target, findings) {

@@ -54,3 +54,37 @@ test("flags a reference-style link definition that resolves to nothing", () => {
 test("accepts a reference-style link definition that resolves correctly", () => {
   assert.deepEqual(validateSkills(fixture("good-ref-link")), []);
 });
+
+test("ignores a broken-looking link inside a fence indented under a list item", () => {
+  // A fence indented two spaces under a list item is one of the most common
+  // shapes in this kind of document. A single-regex stripper anchored to
+  // column 0 misses it entirely.
+  assert.deepEqual(validateSkills(fixture("indented-fence-link")), []);
+});
+
+test("ignores a broken-looking link inside a fence that is never closed", () => {
+  // An opener with no closer runs to end of file; everything after it is
+  // still inside the fence, including the broken-looking link.
+  assert.deepEqual(validateSkills(fixture("unclosed-fence-link")), []);
+});
+
+test("does not let a mismatched fence character close a fence", () => {
+  // A ``` fence is only closed by a ``` line; a ~~~ line in between does not
+  // close it, so the broken-looking link after the ~~~ stays inside the fence.
+  assert.deepEqual(validateSkills(fixture("fence-char-mismatch-link")), []);
+});
+
+test("does not let a shorter fence run close a longer one", () => {
+  // A four-backtick fence is only closed by a line of 4+ backticks; a
+  // three-backtick line does not close it.
+  assert.deepEqual(validateSkills(fixture("fence-length-mismatch-link")), []);
+});
+
+test("still flags a real broken link outside a fence in a file that also has one", () => {
+  // Proves the scanner distinguishes in-fence from out-of-fence content
+  // rather than degenerating into "strip everything."
+  const findings = validateSkills(fixture("mixed-fence-link"));
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].rule, "link");
+  assert.match(findings[0].message, /references\/really-gone\.md/);
+});
