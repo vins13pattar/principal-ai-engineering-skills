@@ -2,6 +2,41 @@
   "handbookRepo": "https://github.com/vins13pattar/principal-ai-engineer-handbook",
   "handbookSha": "8f30ab3c4525a539bbaca4f0ec6a03601760729e",
   "files": {
+    "skills/agent-systems/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
+      "apps/handbook/src/content/docs/learn/modules/05-agent-engineering.mdx",
+      "apps/handbook/src/content/docs/learn/modules/07-langgraph.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/langgraph.mdx",
+      "apps/handbook/src/content/docs/build/labs/durable-agent-task-engine.mdx",
+      "labs/durable-agent-task-engine/src/task_queue/store.py",
+      "labs/durable-agent-task-engine/src/task_queue/worker.py"
+    ],
+    "skills/agent-systems/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
+      "apps/handbook/src/content/docs/build/labs/durable-agent-task-engine.mdx",
+      "apps/handbook/src/content/docs/build/labs/durable-agent-task-engine.task-lifecycle.mmd",
+      "apps/handbook/src/content/docs/learn/modules/05-agent-engineering.mdx",
+      "apps/handbook/src/content/docs/learn/modules/07-langgraph.mdx"
+    ],
+    "skills/agent-systems/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
+      "apps/handbook/src/content/docs/build/labs/durable-agent-task-engine.mdx",
+      "apps/handbook/src/content/docs/learn/modules/05-agent-engineering.mdx"
+    ],
+    "skills/agent-systems/references/patterns.md": [
+      "apps/handbook/src/content/docs/build/labs/durable-agent-task-engine.mdx",
+      "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
+      "labs/durable-agent-task-engine/src/task_queue/store.py",
+      "labs/durable-agent-task-engine/src/task_queue/worker.py",
+      "labs/durable-agent-task-engine/src/task_queue/backoff.py",
+      "labs/durable-agent-task-engine/src/task_queue/models.py"
+    ],
+    "skills/agent-systems/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
+      "apps/handbook/src/content/docs/learn/modules/05-agent-engineering.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/langgraph.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx"
+    ],
     "skills/llm-gateway/SKILL.md": [
       "apps/handbook/src/content/docs/architecture/systems/async-ai-gateway.mdx"
     ],
