@@ -1,0 +1,27 @@
+{
+  "handbookRepo": "https://github.com/vins13pattar/principal-ai-engineer-handbook",
+  "handbookSha": "8f30ab3c4525a539bbaca4f0ec6a03601760729e",
+  "files": {
+    "skills/llm-gateway/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/async-ai-gateway.mdx"
+    ],
+    "skills/llm-gateway/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/async-ai-gateway.mdx",
+      "apps/handbook/src/content/docs/build/labs/model-router.mdx",
+      "apps/handbook/src/content/docs/build/labs/semantic-cache.mdx"
+    ],
+    "skills/llm-gateway/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/async-ai-gateway.mdx"
+    ],
+    "skills/llm-gateway/references/patterns.md": [
+      "labs/async-ai-gateway/src/ai_gateway/rate_limit.py",
+      "labs/async-ai-gateway/src/ai_gateway/runtime.py",
+      "labs/async-ai-gateway/src/ai_gateway/gateway.py",
+      "labs/async-ai-gateway/src/ai_gateway/resilience.py"
+    ],
+    "skills/llm-gateway/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/async-ai-gateway.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx"
+    ]
+  }
+}
