@@ -146,6 +146,45 @@
       "apps/handbook/src/content/docs/learn/modules/15-agent-identity.mdx",
       "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.mdx",
       "apps/handbook/src/content/docs/build/labs/agent-identity-broker.mdx"
+    ],
+    "skills/mcp-servers/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-mcp-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/06-mcp.mdx",
+      "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/mcp.mdx",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/auth.py",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/tenancy.py",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/middleware.py",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/server.py"
+    ],
+    "skills/mcp-servers/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-mcp-platform.mdx",
+      "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.mdx",
+      "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.request-path.mmd",
+      "apps/handbook/src/content/docs/learn/modules/06-mcp.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/mcp.mdx"
+    ],
+    "skills/mcp-servers/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-mcp-platform.mdx",
+      "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.mdx",
+      "apps/handbook/src/content/docs/learn/modules/06-mcp.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/mcp.mdx"
+    ],
+    "skills/mcp-servers/references/patterns.md": [
+      "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.mdx",
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-mcp-platform.mdx",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/auth.py",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/tenancy.py",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/middleware.py",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/server.py",
+      "labs/multi-tenant-mcp-server/tests/test_tenant_isolation.py",
+      "labs/multi-tenant-mcp-server/tests/test_protocol_and_auth.py"
+    ],
+    "skills/mcp-servers/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-mcp-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/06-mcp.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/mcp.mdx",
+      "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.mdx"
     ]
   }
 }
