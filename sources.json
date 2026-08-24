@@ -185,6 +185,38 @@
       "apps/handbook/src/content/docs/learn/modules/06-mcp.mdx",
       "apps/handbook/src/content/docs/reference/lookups/mcp.mdx",
       "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.mdx"
+    ],
+    "skills/model-serving/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/model-serving-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/09-model-serving.mdx",
+      "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.mdx",
+      "labs/dynamic-batching-inference/src/inference/batcher.py",
+      "labs/dynamic-batching-inference/src/inference/router.py",
+      "labs/dynamic-batching-inference/src/inference/benchmark.py"
+    ],
+    "skills/model-serving/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/model-serving-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/09-model-serving.mdx",
+      "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.mdx",
+      "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.batch-formation.mmd"
+    ],
+    "skills/model-serving/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/model-serving-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/09-model-serving.mdx",
+      "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.mdx"
+    ],
+    "skills/model-serving/references/patterns.md": [
+      "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.mdx",
+      "apps/handbook/src/content/docs/architecture/systems/model-serving-platform.mdx",
+      "labs/dynamic-batching-inference/src/inference/batcher.py",
+      "labs/dynamic-batching-inference/src/inference/router.py",
+      "labs/dynamic-batching-inference/src/inference/benchmark.py",
+      "labs/dynamic-batching-inference/src/inference/models.py"
+    ],
+    "skills/model-serving/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/model-serving-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/09-model-serving.mdx",
+      "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.mdx"
     ]
   }
 }
