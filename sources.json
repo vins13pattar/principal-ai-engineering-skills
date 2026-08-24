@@ -217,6 +217,50 @@
       "apps/handbook/src/content/docs/architecture/systems/model-serving-platform.mdx",
       "apps/handbook/src/content/docs/learn/modules/09-model-serving.mdx",
       "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.mdx"
+    ],
+    "skills/ai-reliability/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/ai-reliability-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/12-observability.mdx",
+      "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.mdx",
+      "apps/handbook/src/content/docs/build/labs/evaluation-platform.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/incident-response.mdx",
+      "labs/slo-driven-ai-operations/src/platform_ops/slo.py",
+      "labs/slo-driven-ai-operations/src/platform_ops/autoscaler.py",
+      "labs/slo-driven-ai-operations/src/platform_ops/runbook.py",
+      "labs/evaluation-platform/src/evaluation_platform/significance.py",
+      "labs/evaluation-platform/src/evaluation_platform/dataset.py",
+      "labs/evaluation-platform/src/evaluation_platform/graders.py",
+      "labs/evaluation-platform/src/evaluation_platform/runner.py"
+    ],
+    "skills/ai-reliability/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/ai-reliability-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/12-observability.mdx",
+      "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.mdx",
+      "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.control-loop.mmd",
+      "apps/handbook/src/content/docs/build/labs/evaluation-platform.mdx"
+    ],
+    "skills/ai-reliability/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/ai-reliability-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/12-observability.mdx",
+      "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/incident-response.mdx"
+    ],
+    "skills/ai-reliability/references/patterns.md": [
+      "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.mdx",
+      "apps/handbook/src/content/docs/build/labs/evaluation-platform.mdx",
+      "apps/handbook/src/content/docs/build/labs/evaluation-platform.significance.mmd",
+      "labs/slo-driven-ai-operations/src/platform_ops/slo.py",
+      "labs/slo-driven-ai-operations/src/platform_ops/autoscaler.py",
+      "labs/slo-driven-ai-operations/src/platform_ops/runbook.py",
+      "labs/slo-driven-ai-operations/src/platform_ops/models.py",
+      "labs/evaluation-platform/src/evaluation_platform/significance.py"
+    ],
+    "skills/ai-reliability/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/ai-reliability-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/12-observability.mdx",
+      "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.mdx",
+      "apps/handbook/src/content/docs/build/labs/evaluation-platform.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/incident-response.mdx"
     ]
   }
 }
