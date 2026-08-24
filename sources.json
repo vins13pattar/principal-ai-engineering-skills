@@ -261,6 +261,28 @@
       "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.mdx",
       "apps/handbook/src/content/docs/build/labs/evaluation-platform.mdx",
       "apps/handbook/src/content/docs/cheatsheets/sheets/incident-response.mdx"
+    ],
+    "skills/ai-system-design/SKILL.md": [
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-round.mdx",
+      "apps/handbook/src/content/docs/learn/modules/13-system-design.mdx",
+      "apps/handbook/src/content/docs/learn/modules/13-system-design.design-method.mmd",
+      "apps/handbook/src/content/docs/learn/modules/02-distributed-systems.mdx"
+    ],
+    "skills/ai-system-design/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-round.mdx",
+      "apps/handbook/src/content/docs/learn/modules/13-system-design.mdx"
+    ],
+    "skills/ai-system-design/references/capacity.md": [
+      "apps/handbook/src/content/docs/learn/modules/13-system-design.mdx",
+      "apps/handbook/src/content/docs/learn/modules/02-distributed-systems.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-round.mdx"
+    ],
+    "skills/ai-system-design/references/failure-thinking.md": [
+      "apps/handbook/src/content/docs/learn/modules/02-distributed-systems.mdx",
+      "apps/handbook/src/content/docs/learn/modules/13-system-design.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx"
     ]
   }
 }
