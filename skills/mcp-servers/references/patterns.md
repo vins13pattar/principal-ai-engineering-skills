@@ -63,8 +63,9 @@ tool" — every token gets the same single scope, and per-tool authorization is 
 separate decision made later from the tenant's grants.
 
 Deliberately omitted: the imports (`get_access_token`, `AccessToken`, and the
-`.tenancy` types), and the module's own longer docstrings, each cut to its
-first line.
+`.tenancy` types); the module's docstrings, each cut to its first line; and the
+three-line comment above `REQUIRED_SCOPE`, whose content is the paragraph
+directly above. No comment in this excerpt is mine.
 
 ## Two enforcement points, in two places
 
@@ -172,7 +173,9 @@ Both guards return `result` unchanged when the shape is unexpected. On a
 listing that fails those checks nothing is filtered — acceptable only because
 the invocation check is a separate control.
 
-Deliberately omitted: imports, and both docstrings.
+Deliberately omitted: imports, and both docstrings. The `# carries cacheScope /
+ttlMs / resultType through untouched` comment is mine — the lab makes that
+point in `_filter_listing`'s dropped docstring, not inline.
 
 ## Cache hints, and where every control attaches
 
@@ -219,14 +222,15 @@ where the SDK's `CacheableMethod` set also holds `prompts/list`,
 fall back to the `CacheHint` defaults of `ttl_ms=0` and `scope="private"`,
 safe but immediately stale.
 
-Being a factory rather than a module-level singleton matters here: a stateless
-server has no reason to be a singleton, and tests that share one share a
-registry.
+A factory, not a module-level singleton: a stateless server has no reason to be
+one, and tests that share it share a registry.
 
-Deliberately omitted: the docstring, and the three `@server.tool()` demo
-handlers plus the `_tenant_id()` helper registered between the constructor and
-the `return`. The signature is reflowed onto fewer lines and one comment was
-shortened; parameters are unchanged.
+Deliberately omitted: the docstring; the three `@server.tool()` demo handlers
+plus the `_tenant_id()` helper registered between the constructor and the
+`return`; and the ten-line comment above `TENANT_SCOPED_CACHE_HINTS` carrying
+the SEP-2549 rationale, whose content is the first paragraph above. The
+`# before any handler` comment is mine — the lab has none on that line. The
+signature is reflowed onto fewer lines; parameters are unchanged.
 
 ## The two tests that would have caught the two silent failures
 
