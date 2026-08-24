@@ -79,30 +79,30 @@ concurrent callers form two batches, which is the whole mechanism inverted.
 
 The `_flush` swap is the concurrency-sensitive part. Taking the lock, rebinding
 `self._pending` to a fresh list, and clearing the event happen together, so a
-`submit` racing the flush lands in the next batch rather than one already being
-dispatched. Clearing the event *after* the swap stops a stale set flag from
-closing the next batch instantly.
+`submit` racing the flush lands in the next batch rather than one being
+dispatched — and clearing *after* the swap stops a stale set flag from closing
+the next batch instantly.
 
 The broad `except` around the handler is the rule this excerpt exists for. Let
-the exception escape and the `run` loop exits; from then on every queued
-request and every later arrival awaits a future nothing will ever resolve, and
-the server hangs rather than errors. Setting the exception on each waiter turns
-one bad batch into N failed requests and leaves the loop running.
+the exception escape and the `run` loop exits; every queued request and every
+later arrival then awaits a future nothing will resolve, so the server hangs
+rather than errors. Setting the exception on each waiter turns one bad batch
+into N failed requests and leaves the loop running.
 
-The `if not item.future.done()` guards cover a waiter that was already
-cancelled — a disconnected client, a caller whose own deadline fired — since
-setting a result on a done future raises, and that exception would escape
-mid-loop and strand the rest. `zip(..., strict=True)` enforces the handler's
-contract of one output per payload, in order, instead of resolving requests
-with each other's answers.
+The `if not item.future.done()` guards cover an already-cancelled waiter — a
+disconnected client, a caller whose own deadline fired — since setting a result
+on a done future raises, and that would strand the rest of the batch.
+`zip(..., strict=True)` enforces one output per payload, in order, instead of
+resolving requests with each other's answers.
 
 Deliberately omitted: the imports; `__init__`, described above; the `_Pending`
 dataclass (a `payload` and a `future`); the two `DEFAULT_*` module constants
 (`8` and `0.02`, quoted above); the class docstring and `run`'s docstring
 (`submit` and `_flush` have none); and `shutdown()`, which sets `_stopping`,
-sets the event, and flushes once. The block compiles as printed but will not
-import standalone. No comment in this excerpt is mine — the `# noqa` line is
-the lab's.
+sets the event, and flushes once. The block compiles and imports as printed —
+Python does not evaluate a function body until it is called — and fails at
+instantiation, since dropping `__init__` leaves `DynamicBatcher()` taking no
+arguments. No comment in this excerpt is mine — the `# noqa` line is the lab's.
 
 ## Metrics keyed by version, counted on both paths
 
@@ -162,11 +162,10 @@ comment in this excerpt is mine.
 
 ## Rollback as a weight change — and what a weight of zero does not stop
 
-Composed from `src/inference/router.py`: three methods of `CanaryRouter` that
-are not adjacent in the file — `choose_version` sits before `infer`, and
-`promote` and `rollback` after `list_versions`. Each is verbatim; only their
-neighbours are gone. Serves "make rollback a routing-weight change" and "a
-weight-zero version still serves an explicit version request".
+Composed from `src/inference/router.py`: three verbatim `CanaryRouter` methods
+that are not adjacent in the file — `choose_version` precedes `infer`, the
+other two follow `list_versions`. Serves "make rollback a routing-weight
+change" and "a weight-zero version still serves an explicit version request".
 
 ```python
     def choose_version(self, *, rng: random.Random | None = None) -> str:
@@ -196,28 +195,23 @@ weight-zero version still serves an explicit version request".
         self._set_weight(version, 0.0)
 ```
 
-`promote` and `rollback` do nothing but move numbers. No process restarts, no
-weights reload, no build runs — which is what makes rollback fast enough to use
-while an incident is in progress. The cost is the same property seen from the
-other side: every version stays registered and loaded, so rollback headroom is
-memory you pay for continuously. `rollback` zeroes one weight and leaves the
-rest, keeping their relative shares; `promote` rewrites every weight, which
-makes it the destructive one, since weights are the only record of the split.
+`promote` and `rollback` only move numbers — no restart, no weight reload, no
+build — which is what makes rollback fast enough to use mid-incident. Every
+version stays loaded in exchange, so rollback headroom is memory you pay for
+continuously. `rollback` zeroes one weight and leaves the rest; `promote`
+rewrites all of them, and weights are the only record of what the split was.
 
-The gap is in `choose_version`'s first line. `weight > 0` filters the
-*weighted* draw only, while `infer` starts with `target = version or
-self.choose_version(...)` — so a caller who names the rolled-back version is
-still served by it. Read one way that is version pinning working correctly;
-read the other way it is a rollback that did not roll back. Decide which your
-system means and enforce it, because the code reads identically either way.
+The gap is `choose_version`'s first line. `weight > 0` filters the *weighted*
+draw only, while `infer` starts `target = version or self.choose_version(...)`,
+so a caller naming the rolled-back version is still served by it. Decide
+whether that is version pinning or a rollback that did not roll back, and
+enforce it — the code reads identically either way.
 
 Deliberately omitted: `_set_weight`, which replaces the frozen `ModelVersion`
 with a copy carrying the new weight; the imports; and the docstrings on
-`promote` and `rollback` — one said it routes all traffic to this version, the
-other that it drops this version's weight without affecting others
-(`choose_version` has none). Printed at its file indentation with the `class
-CanaryRouter:` header dropped, which is what stops this block compiling
-standalone. No comment in this excerpt is mine — the
+`promote` and `rollback` (`choose_version` has none). Printed at file
+indentation with the `class CanaryRouter:` header dropped, which is what stops
+this block compiling standalone. No comment here is mine — the
 `# floating-point rounding fallback` line is the lab's.
 
 ## Percentiles, and a client that bounds its own concurrency

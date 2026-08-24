@@ -79,7 +79,8 @@ always worth asking.
 9. **Does each version have its own batcher, or do they share a queue?**
    *Failing answer:* one queue for the endpoint. A shared queue couples the
    canary's batch size and wait time to the stable version's tuning and merges
-   both latency distributions, which quietly undoes check 1 one layer down.
+   both latency distributions, which quietly undoes per-version metrics one
+   layer down.
 
 10. **When was the batch tuning last run, and against what?** *Failing answer:*
     at launch, or against uniform synthetic prompts. Batch cost grows with the
@@ -139,7 +140,7 @@ always worth asking.
 
 18. **Are queue depth and wait time exported at a resolution a controller can
     use?** *Failing answer:* a one-minute dashboard average. They are the
-    scaling signal from check 7, and a signal sampled slower than the thing it
-    controls is decoration.
+    signal the measured-cold-start check asks for, and one sampled slower than
+    the thing it controls is decoration.
 
 **Source:** [Architecture: Model Serving Platform](https://handbook.vinodspattar.in/architecture/systems/model-serving-platform/), [Module 9: Model Serving](https://handbook.vinodspattar.in/learn/modules/09-model-serving/), [Lab: Dynamic Batching Inference](https://handbook.vinodspattar.in/build/labs/dynamic-batching-inference/)
