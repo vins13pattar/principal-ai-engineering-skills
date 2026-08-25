@@ -1,46 +1,48 @@
 # Verification results
 
-Run 2026-08-25. Trials defined in [`TRIALS.md`](TRIALS.md).
+Run 2026-08-25 to 2026-08-26. Trials defined in [`TRIALS.md`](TRIALS.md).
 
-## Summary: the rules work; the descriptions do not fire
+## Summary: rules pass; triggering passes 2 of 3 after three rewrites
 
-The trials have two pass conditions, and they came back opposite ways.
+**Rules-effect — does loading the skill change the output? PASSES on all three trials.** The
+differences are large and traceable to numbered rules; details below.
 
-**Rules-effect — does loading the skill change the output? PASSES, on all three trials.** Each
-prompt was run twice against identical files: once with the skills available and the agent told they
-existed, once without. The differences are large and traceable to specific numbered rules.
+**Triggering — does the agent load the skill unprompted? 2 of 3, after three description rewrites.**
 
-**Triggering — does the agent load the skill unprompted, from the `description` alone? FAILS, 0 of
-3.** Three real Claude Code sessions, skills installed, no mention of them:
-
-| Session | Expected | Actually loaded | Result |
+| Session | Expected | Loaded | Outcome |
 | --- | --- | --- | --- |
-| `Add retry logic to call.py` | `llm-gateway` | `claude-api` (a built-in) | `with_options(max_retries=5)`, no deadline — identical to control |
-| `Review gateway.py and tell me what's wrong with it.` | `llm-gateway` | none | competent findings, none of the skill's signature ones |
-| `Design a multi-tenant MCP server for an enterprise.` | `mcp-servers` | none | generic, and asserted MCP sessions are "long-lived and stateful" — which the skill exists to correct |
+| `Review gateway.py and tell me what's wrong with it.` | `llm-gateway` | **yes** | Announced "reviewed against the LLM-gateway checklist"; framed the whole-loop deadline as the design and flagged what breaks it — the verdict the control got backwards |
+| `Design a multi-tenant MCP server for an enterprise.` | `mcp-servers` | **yes** | Opened with "the 2026-07-28 revision dropped initialize/Mcp-Session-Id" — the exact claim the unskilled run got wrong — plus all three predicted findings |
+| `Add retry logic to call.py` | `llm-gateway` | **no** | The built-in `claude-api` wins on a file importing `anthropic`; result was `max_retries=5`, no total deadline |
 
-The third is the sharpest evidence of cost: the answer contains a factual error about the current
-protocol revision that the loaded skill would have prevented.
+### What it took, and what was wrong
 
-**Confound, stated rather than glossed:** a custom agent (`@agents/adlc-orchestrator.md`) was active
-in all three sessions and may suppress skill surfacing — sessions 2 and 3 loaded no skill at all.
-Session 1 proves the mechanism works, since a built-in skill did load. A control run without the
-custom agent is needed before concluding the descriptions alone are at fault.
+Three rewrites, each fixing a real defect:
 
-**Two likely defects in the descriptions**, pending that control:
+1. **Topic lists, not triggers.** The originals described subject matter. The skills that win state a
+   firing condition.
+2. **A self-inflicted narrowing.** The second attempt ended each description "Read this before
+   opening the file." The MCP session then said aloud: *"I'll answer directly rather than invoking
+   process skills meant for building/reviewing code."* It saw them and declined, because a discussion
+   question has no file. The phrase added to make them fire harder is what suppressed them.
+3. **Passive framing in a crowded field.** These compete against ~400 installed skills in this
+   environment. The reliable winners open with an obligation — "You MUST" — not "Use when". That
+   change alone took triggering from 0/3 to 2/3, and required relaxing a validator rule invented in
+   Task 2 that had *required* the weaker opener.
 
-1. **Verb mismatch.** `mcp-servers` says "building or reviewing an MCP server"; the prompt said
-   *design*. That verb appears in no description but `ai-system-design`'s. "Add", "harden", and
-   "debug" are missing too.
-2. **They read as topic lists, not triggers.** The built-in that won leads with an explicit firing
-   condition. These lead with abstract framing — "code that calls an LLM provider over the network"
-   — rather than the concrete tokens an agent sees in the work: `gateway.py`, `retry`, `backoff`.
+### The remaining failure
 
-| Trial | Skill | Loaded unprompted? | Outputs differ as predicted? | Verdict |
-| --- | --- | --- | --- | --- |
-| 1 — Review `gateway.py` | `llm-gateway` | no | yes — 5 rule-traceable findings the control missed, and one verdict reversed | **rules pass / trigger fails** |
-| 2 — Design an MCP server | `mcp-servers` (+ `agent-authorization`) | no | yes — 3 of 3 predicted claims present vs 0 of 3 | **rules pass / trigger fails** |
-| 3 — Add retry logic | `llm-gateway` | no | yes — bounded total deadline vs attempt count only | **rules pass / trigger fails** |
+`claude-api` beating `llm-gateway` on a file that imports `anthropic` is defensible on its own terms
+— it is an Anthropic API call. The problem is the output: an SDK `max_retries` setting caps attempts,
+not wall-clock, so the result is exactly the unbounded call this skill exists to prevent, on the most
+common form of the task. Skills are not mutually exclusive, so `llm-gateway` now asks to be loaded
+*alongside* any provider-SDK skill and says why. Retest pending.
+
+### Caveat on the environment
+
+This machine has ~400 skills installed (52 personal, 346 from plugins). Someone installing only these
+eight faces far less competition, so these results are from an unusually adversarial field and are
+more likely pessimistic than optimistic.
 
 ---
 
@@ -118,11 +120,7 @@ that reads its whole working directory.
 
 ## Outstanding
 
-1. **Isolate the confound.** Re-run `Review gateway.py and tell me what's wrong with it.` in a plain
-   session with no custom agent active. If a skill loads, the orchestrator was suppressing them and
-   the descriptions may be fine. If none loads, the descriptions are at fault.
-2. **Then rewrite the `description` fields** — all eight — to lead with firing conditions and the
-   concrete tokens an agent sees, and to cover the verbs that are currently missing (design,
-   architect, add, harden, debug).
-3. **Re-run all three trials** after the rewrite. The rules need no change; these runs show they do
-   their job once loaded.
+Retest `Add retry logic to call.py` after the load-alongside change. If `claude-api` still wins
+alone, the honest conclusion is that a built-in with an aggressive trigger beats a project skill on
+its home turf, and the remedy is not more wording — it is either narrowing what these compete with,
+or accepting that this one case needs the skill named explicitly.
