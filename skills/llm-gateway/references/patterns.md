@@ -1,11 +1,15 @@
 # Patterns
 
-Excerpts adapted from the lab, trimmed to the load-bearing lines.
+Four excerpts from `labs/async-ai-gateway` (`src/ai_gateway/`), each named with
+the file it came from and trimmed to the load-bearing lines. No comment in any of
+them is mine; every other edit to the printed text is named in that excerpt's
+`Deliberately omitted:` line.
 
 ## Async token bucket (per-replica)
 
-Serves Rule 3 by being the version the rule warns about: correct in one process,
-silently wrong across replicas.
+From `rate_limit.py`. Serves "an in-process rate limiter multiplies the quota by
+the replica count" by being the version that rule warns about: correct in one
+process, silently wrong across replicas.
 
 ```python
 class AsyncTokenBucket:
@@ -39,16 +43,21 @@ coroutines that both awaken between the read and the write each see the same
 token count and both proceed. There is no `await` inside the critical section
 other than acquiring the lock itself, so it stays cheap.
 
-Deliberately omitted: any coordination between processes. Per tenant, wrap this
-in a dict of buckets keyed by tenant — and note that lazily creating that
-bucket must itself be under a lock, or two concurrent first-requests for a new
-tenant create two buckets and one is discarded with its state.
+Deliberately omitted from the file: the class docstring, the `asyncio` and
+`time` imports, `RateLimitExceededError`, and `__init__`'s opening
+`if capacity <= 0 or refill_per_second <= 0` guard. It compiles and imports;
+instantiating it raises `NameError` on `time`. No line is reflowed.
+
+Deliberately omitted from the design: any coordination between processes. Per
+tenant, wrap this in a dict of buckets keyed by tenant — and lazily creating
+that bucket must itself be under a lock, or two concurrent first-requests for a
+new tenant create two buckets and one is discarded with its state.
 
 ## Redis Lua token bucket (shared)
 
-Serves Rule 3 for more than one replica: the whole check-and-decrement is one
-atomic script, so no round trip sits between reading the token count and writing
-it back.
+From `runtime.py` — the `REDIS_TOKEN_BUCKET` script and `RedisTenantQuota`.
+Serves the same rule beyond one replica: the whole check-and-decrement is one
+atomic script, so no round trip sits between reading the count and writing it.
 
 ```lua
 local key = KEYS[1]
@@ -82,35 +91,39 @@ class RedisTenantQuota:
             raise RateLimitExceededError(f"Tenant rate limit exceeded: {tenant_id}")
 ```
 
-Three things are easy to get wrong here. `now` is passed **in** rather than read
-inside the script, and the consequence is that every replica's clock now feeds a
-shared bucket — so they must be NTP-synced, and a skewed replica grants or
-withholds tokens for everyone. (Historically this was forced: under command
-replication scripts had to be deterministic. Since Redis 5, effect replication
-is the default and a script may read `TIME` — but passing the timestamp in
-remains the better choice, because it keeps the clock an explicit input you can
-stub in a test.)
+Three things are easy to get wrong here. The first: `now` is passed **in**
+rather than read inside the script, so every replica's clock now feeds a shared
+bucket — they must be NTP-synced, and a skewed replica grants or withholds
+tokens for everyone. A script may read `TIME` instead; passing the timestamp in
+keeps the clock an explicit input you can stub in a test.
 
-Note this inverts the rule from the previous section. In-process, `time.time()`
-is a bug and `time.monotonic()` is the fix; here `time.time()` is correct.
-Monotonic clocks are per-process — the origin is arbitrary and differs between
-replicas and across restarts — so a monotonic reading is meaningless as shared
-state. Shared buckets need a shared epoch, which means wall clock plus the NTP
-discipline to make it trustworthy.
+The second inverts the clock rule from the previous section: in-process
+`time.time()` is a bug and `time.monotonic()` the fix, here `time.time()` is
+correct. Monotonic clocks are per-process — the origin is arbitrary and differs
+between replicas and across restarts — so a monotonic reading is meaningless as
+shared state. A shared bucket needs a shared epoch.
 
-The `EXPIRE` on **both** branches is what stops the keyspace growing one
-entry per tenant forever; a TTL of roughly twice the full-refill time is long
-enough that an active tenant's state is never dropped mid-window. And the state
+The third is the `EXPIRE` on **both** branches, which stops the keyspace growing
+one entry per tenant forever; a TTL of roughly twice the full-refill time is
+long enough that an active tenant's state is never dropped mid-window. The state
 is written on the rejected path too, so a rejected request still advances
 `updated` rather than leaving a stale timestamp to refill against later.
 
-Deliberately omitted: Rule 4's timeout and degraded path. This call is on the
-request path and this excerpt has neither — the caller must add both.
+Deliberately omitted from the file: the `"""` delimiters that make the Lua a
+Python string constant, `RedisTenantQuota.__init__` and its three attributes,
+and the imports. The `eval(...)` call is reflowed from eight lines to three,
+with no argument changed. The Python block imports; `acquire` then raises
+`AttributeError` on `self._client`.
+
+Deliberately omitted from the design: "every shared dependency needs a written
+degraded mode" — its timeout and fallback limit. This call is on the request
+path and this excerpt has neither, so the caller must add both.
 
 ## Admission control with a bounded queue wait
 
-Serves Rules 1 and 7: quota before slot, and a wait that ends in a rejection
-rather than an unbounded queue.
+From `gateway.py` — `_admit`, then the body of `generate`. Serves "order the
+request path: identity, then quota, then admission" and "one deadline wraps the
+whole retry loop": quota before slot, and a wait that ends in a rejection.
 
 ```python
 async def _admit(self) -> None:
@@ -144,33 +157,34 @@ finally:
 ```
 
 The `asyncio.wait_for` around a semaphore acquire is the whole pattern: an
-unbounded `acquire()` turns overload into unbounded latency, where every caller
-waits and then times out having produced nothing. A quarter-second cap converts
-that into a fast 503 the caller can act on — which is why "bounded p99" is a
-requirement and not a nicety. Note the ordering inside `_admit`: the rate limit
-is checked *before* the slot, so a rate-limited tenant never occupies capacity.
+unbounded `acquire()` turns overload into unbounded latency, every caller waiting
+and then timing out having produced nothing. A cap — the lab's default is 0.25 s
+— converts that into a fast 503. Note the ordering inside `_admit`: the rate
+limit is checked *before* the slot, so a rate-limited tenant never takes one.
 
 `asyncio.timeout` wraps the loop, so backoff sleeps and all attempts spend the
-same budget — Rule 2 in eight lines. Backoff is `random.uniform(0, exponential)`
-(full jitter, not `exponential + jitter`): the point is to decorrelate a fleet
-of retrying clients, and sleeping the full interval plus noise leaves them
-synchronised. The re-raise when `provider_name is not None` is Rule 6, and read
-it precisely: a named provider gets **zero** retries, not retries without
-swapping. That is the design decision, and it is worth making deliberately —
-re-selection is the only retry mechanism wired in here, so retrying a named
-provider would mean hammering the one endpoint you already know just failed. If
-you want a named provider retried in place, that is a second, narrower backoff
-path you have to write. And `release()` sits in `finally`, outside the timeout,
-so a cancelled request returns its slot.
+same budget — "one deadline wraps the whole retry loop", in eight lines. Backoff
+is `random.uniform(0, exponential)` (full jitter, not `exponential + jitter`):
+sleeping the full interval plus noise leaves a retrying fleet synchronised. The
+re-raise when `provider_name is not None` is "never silently reroute an
+explicitly requested provider", read precisely — a named provider gets **zero**
+retries, re-selection being the only retry mechanism wired in here. `release()`
+sits in `finally`, outside the timeout, so a cancelled request returns its slot.
 
-Deliberately omitted: the retry predicate is narrower than production needs —
-add HTTP 429 and 5xx, and never retry a 4xx. Also omitted is the enclosing
-`async def generate(...)` header, without which this does not compile as
-printed — `await` is only legal inside an async function.
+Deliberately omitted from the file: `_admit` is verbatim; the second block is a
+hard trim of `generate` and **not** a transcription. Dropped: its
+`async def` header, without which it does not compile — `await` is only legal
+inside an async function; the `started` timer; `last_error` and the two `raise`
+tails; and every `self._selector.record_*` call, which is how the lab feeds its
+health-aware selector. One substantive edit: the lab returns a
+`GenerateResponse(...)` where this prints `return await provider.generate(prompt)`.
+Both blocks are de-indented. Also omitted by design: the retry predicate is
+narrower than production needs — add HTTP 429 and 5xx, never retry a 4xx.
 
 ## Circuit breaker with a single half-open probe
 
-Serves Rule 5 and the cost table: a blocked call is one you do not pay for.
+From `resilience.py`. Serves the Deciding table's "provider failing repeatedly"
+row: a blocked call is one you do not pay for.
 
 ```python
 @property
@@ -221,8 +235,16 @@ Without it the probe succeeds, the lock is never released, and every subsequent
 permanently by its own recovery. Wire both calls into the caller's `try`/`except`
 before you trust the breaker.
 
-Deliberately omitted: the state is per-process. Across replicas each opens its
-own circuit, which is usually acceptable — every replica learns within its own
-threshold — but it means the effective probe rate is one per replica.
+Deliberately omitted from the file: the `@dataclass` decorator and the
+`class CircuitBreaker:` header, its `failure_threshold: int = 3` and
+`recovery_timeout_seconds: float = 10.0` fields, `__post_init__` — which is where
+`_state`, `_failures`, `_opened_at`, and `_probe_lock` are set — and the imports.
+The four methods are printed in file order, de-indented to module level, with no
+line reflowed and nothing else changed.
+
+Deliberately omitted from the design: the state is per-process. Across replicas
+each opens its own circuit, which is usually acceptable — every replica learns
+within its own threshold — but it means the effective probe rate is one per
+replica.
 
 **Source:** [Architecture: Async AI Gateway](https://handbook.vinodspattar.in/architecture/systems/async-ai-gateway/), [`labs/async-ai-gateway`](https://github.com/vins13pattar/principal-ai-engineer-handbook/tree/main/labs/async-ai-gateway)
