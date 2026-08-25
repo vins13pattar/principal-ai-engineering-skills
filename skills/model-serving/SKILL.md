@@ -40,8 +40,8 @@ to load, and a new version can be *worse* without being broken.
    broadly at the flush, set the exception on each waiter, and keep looping.
 4. **One batcher per version, never a shared queue.** A shared queue couples the
    canary's batch size and wait time to the stable version's tuning and blends
-   both into one latency distribution. Separate queues are what make rule 1's
-   separate metrics mean anything.
+   both into one latency distribution. Separate queues are what make
+   per-version metrics mean anything.
 5. **Make rollback a routing-weight change, and keep the previous version
    loaded.** A weight change is seconds and needs no build, which is what makes
    it usable during an incident. The cost is standing memory for every live

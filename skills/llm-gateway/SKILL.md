@@ -38,8 +38,13 @@ retry, and it includes a multi-tenant gateway.
    lead; an I/O-bound gateway's CPU stays flat until it falls over.
 8. **Take tenant identity from a verified token.** A client-supplied header
    is a claim, not an identity.
-9. **Drain on SIGTERM.** Stop accepting, let in-flight requests finish inside
-   a bounded window, then exit. Otherwise every deploy drops requests.
+9. **Drain on SIGTERM by failing readiness while liveness keeps passing.**
+   Stop accepting, let in-flight requests finish inside a bounded window, then
+   exit. The two probes are the part that gets written wrong: a draining
+   replica is not a dead one, so failing liveness gets it killed mid-drain
+   instead of drained. Set the orchestrator's termination grace period
+   *longer* than the drain timeout — equal is a race you lose — and longer
+   than your longest expected stream, or accept cutting streams off.
 10. **Measure queue-wait separately from provider time.** Summed together, a
     system starved of slots is indistinguishable from a slow provider.
 
@@ -48,9 +53,9 @@ retry, and it includes a multi-tenant gateway.
 | Situation | Do this | Because |
 | --- | --- | --- |
 | One replica, one tenant | In-process token bucket | A shared store buys nothing yet |
-| More than one replica | Shared store, with a local fallback limit | Rule 3 |
-| Caller named a provider | Honour it; fail rather than reroute | Rule 6 |
-| Caller named none | Health-aware selection with fallback | Rule 5 |
+| More than one replica | Shared store, with a local fallback limit | "An in-process rate limiter multiplies the quota by the replica count" — N replicas give each tenant N x their limit, silently |
+| Caller named a provider | Honour it; fail rather than reroute | "Never silently reroute an explicitly requested provider." The request is an intent — cost, compliance, residency — that outranks availability |
+| Caller named none | Health-aware selection with fallback | "Route on latency, not only on errors." A provider that stays up and gets slower is the case an error-rate check routes straight into |
 | Provider failing repeatedly | Circuit breaker; every blocked call is an unbilled failure | Cost |
 | Client disconnects mid-stream | Stop pulling tokens | You are billed for tokens nobody reads |
 
