@@ -2,30 +2,45 @@
 
 Run 2026-08-25. Trials defined in [`TRIALS.md`](TRIALS.md).
 
-## What was and was not tested
+## Summary: the rules work; the descriptions do not fire
 
-The trials have two pass conditions. Only one of them was testable with the harness available.
+The trials have two pass conditions, and they came back opposite ways.
 
-**Rules-effect — does loading the skill change the output? TESTED, and it passes on all three
-trials.** Each prompt was run twice against identical files: once in a project with the skills
-installed and the agent told they existed, once in a project without them. The differences are
-large and traceable to specific numbered rules.
+**Rules-effect — does loading the skill change the output? PASSES, on all three trials.** Each
+prompt was run twice against identical files: once with the skills available and the agent told they
+existed, once without. The differences are large and traceable to specific numbered rules.
 
-**Triggering — does the agent load the skill unprompted, from the `description` alone? NOT TESTED.**
-The runs were performed by subagents, and project skills under `.agents/skills/` are not registered
-with a subagent's `Skill` tool — one run found `llm-gateway` only by reading it as a plain file and
-said so. A clean run of Trial 3 with no hint confirmed the gap: the agent reached for a built-in
-skill, never opened `llm-gateway`, and produced control-grade output. **That is a limitation of the
-test harness, not evidence about the descriptions.** Testing it needs a real session where the
-skills are registered.
+**Triggering — does the agent load the skill unprompted, from the `description` alone? FAILS, 0 of
+3.** Three real Claude Code sessions, skills installed, no mention of them:
 
-So the honest summary: **the rules work. Whether the descriptions fire is still unverified.**
+| Session | Expected | Actually loaded | Result |
+| --- | --- | --- | --- |
+| `Add retry logic to call.py` | `llm-gateway` | `claude-api` (a built-in) | `with_options(max_retries=5)`, no deadline — identical to control |
+| `Review gateway.py and tell me what's wrong with it.` | `llm-gateway` | none | competent findings, none of the skill's signature ones |
+| `Design a multi-tenant MCP server for an enterprise.` | `mcp-servers` | none | generic, and asserted MCP sessions are "long-lived and stateful" — which the skill exists to correct |
+
+The third is the sharpest evidence of cost: the answer contains a factual error about the current
+protocol revision that the loaded skill would have prevented.
+
+**Confound, stated rather than glossed:** a custom agent (`@agents/adlc-orchestrator.md`) was active
+in all three sessions and may suppress skill surfacing — sessions 2 and 3 loaded no skill at all.
+Session 1 proves the mechanism works, since a built-in skill did load. A control run without the
+custom agent is needed before concluding the descriptions alone are at fault.
+
+**Two likely defects in the descriptions**, pending that control:
+
+1. **Verb mismatch.** `mcp-servers` says "building or reviewing an MCP server"; the prompt said
+   *design*. That verb appears in no description but `ai-system-design`'s. "Add", "harden", and
+   "debug" are missing too.
+2. **They read as topic lists, not triggers.** The built-in that won leads with an explicit firing
+   condition. These lead with abstract framing — "code that calls an LLM provider over the network"
+   — rather than the concrete tokens an agent sees in the work: `gateway.py`, `retry`, `backoff`.
 
 | Trial | Skill | Loaded unprompted? | Outputs differ as predicted? | Verdict |
 | --- | --- | --- | --- | --- |
-| 1 — Review `gateway.py` | `llm-gateway` | not testable | yes — 5 rule-traceable findings the control missed, and one verdict reversed | **rules pass** |
-| 2 — Design an MCP server | `mcp-servers` (+ `agent-authorization`) | not testable | yes — 3 of 3 predicted claims present vs 0 of 3 | **rules pass** |
-| 3 — Add retry logic | `llm-gateway` | **no** (harness limitation) | yes — bounded total deadline vs attempt count only | **rules pass** |
+| 1 — Review `gateway.py` | `llm-gateway` | no | yes — 5 rule-traceable findings the control missed, and one verdict reversed | **rules pass / trigger fails** |
+| 2 — Design an MCP server | `mcp-servers` (+ `agent-authorization`) | no | yes — 3 of 3 predicted claims present vs 0 of 3 | **rules pass / trigger fails** |
+| 3 — Add retry logic | `llm-gateway` | no | yes — bounded total deadline vs attempt count only | **rules pass / trigger fails** |
 
 ---
 
@@ -103,6 +118,11 @@ that reads its whole working directory.
 
 ## Outstanding
 
-Triggering. Run the three prompts in a real session with the skills installed and no mention of
-them, and record whether the expected skill loads on its own. If it does not, the `description`
-fields need sharpening — not the rules, which these runs show are doing their job.
+1. **Isolate the confound.** Re-run `Review gateway.py and tell me what's wrong with it.` in a plain
+   session with no custom agent active. If a skill loads, the orchestrator was suppressing them and
+   the descriptions may be fine. If none loads, the descriptions are at fault.
+2. **Then rewrite the `description` fields** — all eight — to lead with firing conditions and the
+   concrete tokens an agent sees, and to cover the verbs that are currently missing (design,
+   architect, add, harden, debug).
+3. **Re-run all three trials** after the rewrite. The rules need no change; these runs show they do
+   their job once loaded.
