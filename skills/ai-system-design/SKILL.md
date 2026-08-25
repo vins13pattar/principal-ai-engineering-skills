@@ -1,6 +1,6 @@
 ---
 name: ai-system-design
-description: Use when designing an AI system before writing it, or reviewing someone else's design document, architecture proposal, RFC, or ADR — constraints, capacity estimates, state ownership, failure and blast radius, reversibility, rollout, cost, and observability.
+description: Use when designing or architecting an AI system before writing it, or reviewing someone's design document, RFC, ADR, or architecture proposal — constraints, capacity arithmetic, state ownership, blast radius, what breaks at 10x, reversibility, rollout, cost, and observability. Routes to seven domain skills for system-specific questions.
 ---
 
 # AI System Design

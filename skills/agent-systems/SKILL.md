@@ -1,6 +1,6 @@
 ---
 name: agent-systems
-description: Use when writing or reviewing agent execution code — agent loops, tool-calling loops, task queues, workers, leases, retries, checkpointing, resumption after crash, dead-letter handling, or LangGraph graphs.
+description: Use when the task involves work that outlives its request, or reviewing code that does — agent loops, tool-calling loops, task queues, workers, leases, visibility timeouts, heartbeats, checkpoints, resumption after a crash, dead-letter queues, or LangGraph graphs. Also load when designing durable execution, or debugging a task that ran twice. Read this before opening the file.
 ---
 
 # Agent Systems

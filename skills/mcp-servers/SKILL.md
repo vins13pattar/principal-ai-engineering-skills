@@ -1,6 +1,6 @@
 ---
 name: mcp-servers
-description: Use when building or reviewing an MCP server — tool and resource listings, the discover response, transports and sessions, per-request authentication, multi-tenant isolation, cache scope, or error responses that must not confirm what exists.
+description: Use when building, designing, hardening, or reviewing an MCP server — tools/list and tools/call, the discover response, transports and sessions, per-request authentication, multi-tenant isolation, cacheScope and ttlMs, or refusals that must not reveal what exists. Also load for any question about MCP server architecture. Read this before opening the file.
 ---
 
 # MCP Servers

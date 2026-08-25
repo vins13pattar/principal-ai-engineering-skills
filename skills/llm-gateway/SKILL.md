@@ -1,6 +1,6 @@
 ---
 name: llm-gateway
-description: Use when writing or reviewing code that calls an LLM provider over the network — retries, timeouts, rate limiting, quota, provider fallback, circuit breaking, streaming, per-tenant isolation, or an API gateway in front of one or more model providers.
+description: Use when the task involves calling a model provider over the network, or reviewing code that does — retries, backoff, timeouts, deadlines, rate limits, quota, provider fallback, circuit breakers, streaming, or per-tenant isolation. Also load for any file acting as a gateway, proxy, or router in front of one or more LLM providers, and when designing one. Read this before opening the file.
 ---
 
 # LLM Gateway

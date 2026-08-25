@@ -1,6 +1,6 @@
 ---
 name: ai-reliability
-description: Use when writing or reviewing reliability work for an AI system — SLOs and SLIs, error budgets, burn-rate alerts, evaluation sets and graders, quality regression detection, runbook automation, or incident response for a model-backed service.
+description: Use when the task involves keeping a model-backed service healthy, or reviewing code that does — SLOs and SLIs, error budgets, burn-rate alerts, evaluation sets, graders, quality regression detection, significance of an eval delta, runbook automation, or incident response. Also load when designing alerting or an eval harness. Read this before opening the file.
 ---
 
 # AI Reliability
