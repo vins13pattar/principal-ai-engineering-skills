@@ -2,47 +2,43 @@
 
 Run 2026-08-25 to 2026-08-26. Trials defined in [`TRIALS.md`](TRIALS.md).
 
-## Summary: rules pass; triggering passes 2 of 3 after three rewrites
+## Summary: both conditions pass, 3 of 3
 
-**Rules-effect — does loading the skill change the output? PASSES on all three trials.** The
-differences are large and traceable to numbered rules; details below.
+**Rules-effect — does loading the skill change the output? PASSES on all three trials.**
 
-**Triggering — does the agent load the skill unprompted? 2 of 3, after three description rewrites.**
+**Triggering — does the agent load the skill unprompted? PASSES 3 of 3**, after four description
+rewrites.
 
-| Session | Expected | Loaded | Outcome |
-| --- | --- | --- | --- |
-| `Review gateway.py and tell me what's wrong with it.` | `llm-gateway` | **yes** | Announced "reviewed against the LLM-gateway checklist"; framed the whole-loop deadline as the design and flagged what breaks it — the verdict the control got backwards |
-| `Design a multi-tenant MCP server for an enterprise.` | `mcp-servers` | **yes** | Opened with "the 2026-07-28 revision dropped initialize/Mcp-Session-Id" — the exact claim the unskilled run got wrong — plus all three predicted findings |
-| `Add retry logic to call.py` | `llm-gateway` | **no** | The built-in `claude-api` wins on a file importing `anthropic`; result was `max_retries=5`, no total deadline |
+| Session | Loaded | Outcome |
+| --- | --- | --- |
+| `Add retry logic to call.py` | `llm-gateway` | Said why: "matches the llm-gateway skill's trigger (retries/backoff for LLM provider calls). Let me load it before implementing." Read `references/patterns.md`, then wrote a single `time.monotonic()` deadline with each attempt bounded by `timeout=remaining` and the backoff sleep clamped to it |
+| `Review gateway.py and tell me what's wrong with it.` | `llm-gateway` | "Reviewed against the LLM-gateway checklist"; framed the whole-loop deadline as the design and flagged what breaks it — the verdict the control got backwards |
+| `Design a multi-tenant MCP server for an enterprise.` | `mcp-servers` | Opened with "the 2026-07-28 revision dropped initialize/Mcp-Session-Id" — the exact claim the unskilled run got wrong — plus all three predicted findings |
 
-### What it took, and what was wrong
+On the retry task the control produced `max_retries=5` with no bound on wall-clock. The skilled run
+bounds total elapsed time, gives each attempt only what remains, clamps the backoff sleep to the
+remaining budget, and uses full jitter rather than equal jitter. That is rule 2 in full.
 
-Three rewrites, each fixing a real defect:
+### What it took: four rewrites, three real defects
 
 1. **Topic lists, not triggers.** The originals described subject matter. The skills that win state a
    firing condition.
 2. **A self-inflicted narrowing.** The second attempt ended each description "Read this before
-   opening the file." The MCP session then said aloud: *"I'll answer directly rather than invoking
-   process skills meant for building/reviewing code."* It saw them and declined, because a discussion
-   question has no file. The phrase added to make them fire harder is what suppressed them.
-3. **Passive framing in a crowded field.** These compete against ~400 installed skills in this
-   environment. The reliable winners open with an obligation — "You MUST" — not "Use when". That
-   change alone took triggering from 0/3 to 2/3, and required relaxing a validator rule invented in
-   Task 2 that had *required* the weaker opener.
-
-### The remaining failure
-
-`claude-api` beating `llm-gateway` on a file that imports `anthropic` is defensible on its own terms
-— it is an Anthropic API call. The problem is the output: an SDK `max_retries` setting caps attempts,
-not wall-clock, so the result is exactly the unbounded call this skill exists to prevent, on the most
-common form of the task. Skills are not mutually exclusive, so `llm-gateway` now asks to be loaded
-*alongside* any provider-SDK skill and says why. Retest pending.
+   opening the file." The MCP session then declined them aloud — *"process skills meant for
+   building/reviewing code"* — because a discussion question has no file. The phrase added to make
+   them fire harder is what suppressed them.
+3. **Passive framing in a crowded field.** These compete against ~400 installed skills here. The
+   reliable winners open with an obligation, "You MUST", not "Use when". That change took triggering
+   from 0/3 to 2/3, and required relaxing a validator rule invented in Task 2 that had *required* the
+   weaker opener.
+4. **Skills are not mutually exclusive.** The last failure was a built-in winning on its home turf —
+   an Anthropic SDK file. `llm-gateway` now asks to be loaded *alongside* any provider-SDK skill and
+   says why: an SDK retry setting caps attempts, not wall-clock.
 
 ### Caveat on the environment
 
 This machine has ~400 skills installed (52 personal, 346 from plugins). Someone installing only these
-eight faces far less competition, so these results are from an unusually adversarial field and are
-more likely pessimistic than optimistic.
+eight faces far less competition, so 3/3 here is a result from an unusually adversarial field.
 
 ---
 
@@ -120,7 +116,4 @@ that reads its whole working directory.
 
 ## Outstanding
 
-Retest `Add retry logic to call.py` after the load-alongside change. If `claude-api` still wins
-alone, the honest conclusion is that a built-in with an aggressive trigger beats a project skill on
-its home turf, and the remedy is not more wording — it is either narrowing what these compete with,
-or accepting that this one case needs the skill named explicitly.
+Nothing. Both pass conditions are met on all three trials.
