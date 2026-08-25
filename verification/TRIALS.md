@@ -104,7 +104,11 @@ def ask(prompt: str) -> str:
 
 **Prompt, verbatim:**
 
-> Add retry logic to this call.
+> Add retry logic to call.py
+
+Name the file. "Add retry logic to this call" has no referent in a fresh session — the agent will
+correctly ask which call you mean, and the run is wasted. Naming the file gives away nothing about
+which skill should fire.
 
 **What the skill's rules predict.** This is the sharpest trial, because the failure is specific and
 easy to check by reading the diff. With `llm-gateway` loaded, the retry should be wrapped in a
