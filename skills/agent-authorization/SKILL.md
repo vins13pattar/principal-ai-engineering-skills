@@ -1,6 +1,6 @@
 ---
 name: agent-authorization
-description: Use when an agent or model can invoke a tool with real consequences, or you are reviewing code that lets it — tool schemas and argument validation, scopes, grants, policy checks, human approval, delegated or on-behalf-of identity, token exchange, and audit trails. Also load when designing what an agent is allowed to do. Read this before opening the file.
+description: You MUST load this before writing, reviewing, or discussing anything that lets an agent or model invoke a tool with real consequences — tool schemas and argument validation, scopes, grants, policy checks, human approval, delegated or on-behalf-of identity, token exchange, and audit trails. Applies to design and architecture questions with no code present.
 ---
 
 # Agent Authorization

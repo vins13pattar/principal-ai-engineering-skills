@@ -1,6 +1,6 @@
 ---
 name: agent-systems
-description: Use when the task involves work that outlives its request, or reviewing code that does — agent loops, tool-calling loops, task queues, workers, leases, visibility timeouts, heartbeats, checkpoints, resumption after a crash, dead-letter queues, or LangGraph graphs. Also load when designing durable execution, or debugging a task that ran twice. Read this before opening the file.
+description: You MUST load this before writing, reviewing, or discussing work that outlives its request — agent loops, tool-calling loops, task queues, workers, leases, visibility timeouts, heartbeats, checkpoints, resumption after a crash, dead-letter queues, or LangGraph graphs. Applies to design and architecture questions with no code present.
 ---
 
 # Agent Systems

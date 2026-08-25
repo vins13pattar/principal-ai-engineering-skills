@@ -1,6 +1,6 @@
 ---
 name: model-serving
-description: Use when the task involves inference you host, or reviewing code that serves it — dynamic or continuous batching, batch size and timeout triggers, KV cache, GPU or accelerator utilisation, cold starts, replica autoscaling, canary rollout, or tail latency of a model endpoint. Also load when designing a serving platform. Read this before opening the file.
+description: You MUST load this before writing, reviewing, or discussing inference you host — dynamic or continuous batching, batch size and timeout triggers, KV cache, GPU or accelerator utilisation, cold starts, replica autoscaling, canary rollout, or tail latency of a model endpoint. Applies to design and architecture questions with no code present.
 ---
 
 # Model Serving

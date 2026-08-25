@@ -1,6 +1,6 @@
 ---
 name: rag-systems
-description: Use when the task involves retrieval, or reviewing code that does — chunking, embeddings, vector or hybrid search, BM25, reranking, rank fusion, grounding, citations, index freshness, or filtering results by tenant or user permission. Also load when designing a RAG pipeline, or debugging answers that cite the wrong document. Read this before opening the file.
+description: You MUST load this before writing, reviewing, or discussing retrieval — chunking, embeddings, vector or hybrid search, BM25, reranking, rank fusion, grounding, citations, index freshness, or filtering results by tenant or user permission — and before answering any question about designing a RAG pipeline. Applies to design and architecture questions with no code present.
 ---
 
 # RAG Systems

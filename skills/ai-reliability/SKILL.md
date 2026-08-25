@@ -1,6 +1,6 @@
 ---
 name: ai-reliability
-description: Use when the task involves keeping a model-backed service healthy, or reviewing code that does — SLOs and SLIs, error budgets, burn-rate alerts, evaluation sets, graders, quality regression detection, significance of an eval delta, runbook automation, or incident response. Also load when designing alerting or an eval harness. Read this before opening the file.
+description: You MUST load this before writing, reviewing, or discussing how a model-backed service is kept healthy — SLOs and SLIs, error budgets, burn-rate alerts, evaluation sets, graders, quality regression detection, significance of an eval delta, runbook automation, or incident response. Applies to design and architecture questions with no code present.
 ---
 
 # AI Reliability

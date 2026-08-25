@@ -126,11 +126,14 @@ export function validateSkills(rootDir) {
         rule: "description",
         message: `description is ${data.description.length} characters, over ${DESCRIPTION_MAX}`,
       });
-    } else if (!data.description.startsWith("Use when")) {
+      // Either opener is accepted: both state a firing condition rather than a
+      // topic. "You MUST" is what the skills that reliably win a crowded field
+      // use — in a real environment these compete against ~400 other skills.
+    } else if (!/^(Use when|You MUST)\b/.test(data.description)) {
       findings.push({
         file: skillFile,
         rule: "description",
-        message: 'description must begin "Use when" so the trigger is explicit',
+        message: 'description must begin "Use when" or "You MUST" so the trigger is explicit',
       });
     }
 

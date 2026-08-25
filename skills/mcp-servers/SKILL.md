@@ -1,6 +1,6 @@
 ---
 name: mcp-servers
-description: Use when building, designing, hardening, or reviewing an MCP server — tools/list and tools/call, the discover response, transports and sessions, per-request authentication, multi-tenant isolation, cacheScope and ttlMs, or refusals that must not reveal what exists. Also load for any question about MCP server architecture. Read this before opening the file.
+description: You MUST load this before building, designing, hardening, reviewing, or discussing an MCP server — tools/list and tools/call, the discover response, transports and sessions, per-request authentication, multi-tenant isolation, cacheScope and ttlMs, or refusals that must not reveal what exists. Applies to design and architecture questions with no code present.
 ---
 
 # MCP Servers
