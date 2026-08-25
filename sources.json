@@ -1,0 +1,288 @@
+{
+  "handbookRepo": "https://github.com/vins13pattar/principal-ai-engineer-handbook",
+  "handbookSha": "f855322",
+  "files": {
+    "skills/agent-systems/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
+      "apps/handbook/src/content/docs/learn/modules/05-agent-engineering.mdx",
+      "apps/handbook/src/content/docs/learn/modules/07-langgraph.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/langgraph.mdx",
+      "apps/handbook/src/content/docs/build/labs/durable-agent-task-engine.mdx",
+      "labs/durable-agent-task-engine/src/task_queue/store.py",
+      "labs/durable-agent-task-engine/src/task_queue/worker.py"
+    ],
+    "skills/agent-systems/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
+      "apps/handbook/src/content/docs/build/labs/durable-agent-task-engine.mdx",
+      "apps/handbook/src/content/docs/build/labs/durable-agent-task-engine.task-lifecycle.mmd",
+      "apps/handbook/src/content/docs/learn/modules/05-agent-engineering.mdx",
+      "apps/handbook/src/content/docs/learn/modules/07-langgraph.mdx"
+    ],
+    "skills/agent-systems/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
+      "apps/handbook/src/content/docs/build/labs/durable-agent-task-engine.mdx",
+      "apps/handbook/src/content/docs/learn/modules/05-agent-engineering.mdx"
+    ],
+    "skills/agent-systems/references/patterns.md": [
+      "apps/handbook/src/content/docs/build/labs/durable-agent-task-engine.mdx",
+      "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
+      "labs/durable-agent-task-engine/src/task_queue/store.py",
+      "labs/durable-agent-task-engine/src/task_queue/worker.py",
+      "labs/durable-agent-task-engine/src/task_queue/backoff.py",
+      "labs/durable-agent-task-engine/src/task_queue/models.py"
+    ],
+    "skills/agent-systems/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
+      "apps/handbook/src/content/docs/learn/modules/05-agent-engineering.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/langgraph.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx"
+    ],
+    "skills/llm-gateway/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/async-ai-gateway.mdx"
+    ],
+    "skills/llm-gateway/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/async-ai-gateway.mdx",
+      "apps/handbook/src/content/docs/build/labs/model-router.mdx",
+      "apps/handbook/src/content/docs/build/labs/semantic-cache.mdx"
+    ],
+    "skills/llm-gateway/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/async-ai-gateway.mdx"
+    ],
+    "skills/llm-gateway/references/patterns.md": [
+      "labs/async-ai-gateway/src/ai_gateway/rate_limit.py",
+      "labs/async-ai-gateway/src/ai_gateway/runtime.py",
+      "labs/async-ai-gateway/src/ai_gateway/gateway.py",
+      "labs/async-ai-gateway/src/ai_gateway/resilience.py"
+    ],
+    "skills/llm-gateway/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/async-ai-gateway.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx"
+    ],
+    "skills/rag-systems/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-rag-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/08-rag.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/rag.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/vector-db.mdx"
+    ],
+    "skills/rag-systems/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-rag-platform.mdx",
+      "apps/handbook/src/content/docs/build/labs/hybrid-retrieval.mdx",
+      "apps/handbook/src/content/docs/build/labs/hybrid-retrieval.retrieval-pipeline.mmd",
+      "apps/handbook/src/content/docs/learn/modules/08-rag.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/vector-db.mdx"
+    ],
+    "skills/rag-systems/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-rag-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/08-rag.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/rag.mdx"
+    ],
+    "skills/rag-systems/references/patterns.md": [
+      "apps/handbook/src/content/docs/build/labs/hybrid-retrieval.mdx",
+      "apps/handbook/src/content/docs/learn/modules/08-rag.mdx",
+      "labs/hybrid-retrieval/src/retrieval/chunking.py",
+      "labs/hybrid-retrieval/src/retrieval/fusion.py",
+      "labs/hybrid-retrieval/src/retrieval/groundedness.py",
+      "labs/hybrid-retrieval/src/retrieval/evaluation.py"
+    ],
+    "skills/rag-systems/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-rag-platform.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx",
+      "apps/handbook/src/content/docs/learn/modules/08-rag.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/vector-db.mdx"
+    ],
+    "skills/agent-authorization/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",
+      "apps/handbook/src/content/docs/learn/modules/15-agent-identity.mdx",
+      "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.mdx",
+      "apps/handbook/src/content/docs/build/labs/agent-identity-broker.mdx",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/gateway.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/registry.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/models.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/rate_limit.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/approval.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/audit.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/scope.py",
+      "labs/agent-identity-broker/src/agent_identity/broker.py",
+      "labs/agent-identity-broker/src/agent_identity/resource_server.py",
+      "labs/agent-identity-broker/src/agent_identity/claims.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/errors.py",
+      "labs/agent-identity-broker/src/agent_identity/errors.py"
+    ],
+    "skills/agent-authorization/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",
+      "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.mdx",
+      "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.enforcement-pipeline.mmd",
+      "apps/handbook/src/content/docs/build/labs/agent-identity-broker.mdx",
+      "apps/handbook/src/content/docs/build/labs/agent-identity-broker.exchange-path.mmd",
+      "apps/handbook/src/content/docs/learn/modules/15-agent-identity.mdx",
+      "apps/handbook/src/content/docs/learn/modules/15-agent-identity.token-exchange.mmd",
+      "labs/agent-identity-broker/src/agent_identity/blast_radius.py",
+      "labs/agent-identity-broker/src/agent_identity/demo.py"
+    ],
+    "skills/agent-authorization/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",
+      "apps/handbook/src/content/docs/learn/modules/15-agent-identity.mdx",
+      "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.mdx",
+      "apps/handbook/src/content/docs/build/labs/agent-identity-broker.mdx",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/audit.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/rate_limit.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/models.py"
+    ],
+    "skills/agent-authorization/references/patterns.md": [
+      "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.mdx",
+      "apps/handbook/src/content/docs/build/labs/agent-identity-broker.mdx",
+      "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/gateway.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/registry.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/demo.py",
+      "labs/agent-identity-broker/src/agent_identity/resource_server.py",
+      "labs/agent-identity-broker/src/agent_identity/broker.py",
+      "labs/agent-identity-broker/src/agent_identity/claims.py",
+      "labs/policy-gated-tool-runtime/src/tool_gateway/errors.py",
+      "labs/agent-identity-broker/src/agent_identity/errors.py"
+    ],
+    "skills/agent-authorization/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",
+      "apps/handbook/src/content/docs/learn/modules/15-agent-identity.mdx",
+      "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.mdx",
+      "apps/handbook/src/content/docs/build/labs/agent-identity-broker.mdx"
+    ],
+    "skills/mcp-servers/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-mcp-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/06-mcp.mdx",
+      "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/mcp.mdx",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/auth.py",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/tenancy.py",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/middleware.py",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/server.py"
+    ],
+    "skills/mcp-servers/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-mcp-platform.mdx",
+      "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.mdx",
+      "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.request-path.mmd",
+      "apps/handbook/src/content/docs/learn/modules/06-mcp.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/mcp.mdx"
+    ],
+    "skills/mcp-servers/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-mcp-platform.mdx",
+      "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.mdx",
+      "apps/handbook/src/content/docs/learn/modules/06-mcp.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/mcp.mdx"
+    ],
+    "skills/mcp-servers/references/patterns.md": [
+      "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.mdx",
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-mcp-platform.mdx",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/auth.py",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/tenancy.py",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/middleware.py",
+      "labs/multi-tenant-mcp-server/src/mcp_tenancy/server.py",
+      "labs/multi-tenant-mcp-server/tests/test_tenant_isolation.py",
+      "labs/multi-tenant-mcp-server/tests/test_protocol_and_auth.py"
+    ],
+    "skills/mcp-servers/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/enterprise-mcp-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/06-mcp.mdx",
+      "apps/handbook/src/content/docs/reference/lookups/mcp.mdx",
+      "apps/handbook/src/content/docs/build/labs/multi-tenant-mcp-server.mdx"
+    ],
+    "skills/model-serving/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/model-serving-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/09-model-serving.mdx",
+      "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.mdx",
+      "labs/dynamic-batching-inference/src/inference/batcher.py",
+      "labs/dynamic-batching-inference/src/inference/router.py",
+      "labs/dynamic-batching-inference/src/inference/benchmark.py"
+    ],
+    "skills/model-serving/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/model-serving-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/09-model-serving.mdx",
+      "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.mdx",
+      "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.batch-formation.mmd"
+    ],
+    "skills/model-serving/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/model-serving-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/09-model-serving.mdx",
+      "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.mdx"
+    ],
+    "skills/model-serving/references/patterns.md": [
+      "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.mdx",
+      "apps/handbook/src/content/docs/architecture/systems/model-serving-platform.mdx",
+      "labs/dynamic-batching-inference/src/inference/batcher.py",
+      "labs/dynamic-batching-inference/src/inference/router.py",
+      "labs/dynamic-batching-inference/src/inference/benchmark.py",
+      "labs/dynamic-batching-inference/src/inference/models.py"
+    ],
+    "skills/model-serving/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/model-serving-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/09-model-serving.mdx",
+      "apps/handbook/src/content/docs/build/labs/dynamic-batching-inference.mdx"
+    ],
+    "skills/ai-reliability/SKILL.md": [
+      "apps/handbook/src/content/docs/architecture/systems/ai-reliability-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/12-observability.mdx",
+      "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.mdx",
+      "apps/handbook/src/content/docs/build/labs/evaluation-platform.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/incident-response.mdx",
+      "labs/slo-driven-ai-operations/src/platform_ops/slo.py",
+      "labs/slo-driven-ai-operations/src/platform_ops/autoscaler.py",
+      "labs/slo-driven-ai-operations/src/platform_ops/runbook.py",
+      "labs/evaluation-platform/src/evaluation_platform/significance.py",
+      "labs/evaluation-platform/src/evaluation_platform/dataset.py",
+      "labs/evaluation-platform/src/evaluation_platform/graders.py",
+      "labs/evaluation-platform/src/evaluation_platform/runner.py"
+    ],
+    "skills/ai-reliability/references/architecture.md": [
+      "apps/handbook/src/content/docs/architecture/systems/ai-reliability-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/12-observability.mdx",
+      "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.mdx",
+      "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.control-loop.mmd",
+      "apps/handbook/src/content/docs/build/labs/evaluation-platform.mdx"
+    ],
+    "skills/ai-reliability/references/failure-modes.md": [
+      "apps/handbook/src/content/docs/architecture/systems/ai-reliability-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/12-observability.mdx",
+      "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/incident-response.mdx"
+    ],
+    "skills/ai-reliability/references/patterns.md": [
+      "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.mdx",
+      "apps/handbook/src/content/docs/build/labs/evaluation-platform.mdx",
+      "apps/handbook/src/content/docs/build/labs/evaluation-platform.significance.mmd",
+      "labs/slo-driven-ai-operations/src/platform_ops/slo.py",
+      "labs/slo-driven-ai-operations/src/platform_ops/autoscaler.py",
+      "labs/slo-driven-ai-operations/src/platform_ops/runbook.py",
+      "labs/slo-driven-ai-operations/src/platform_ops/models.py",
+      "labs/evaluation-platform/src/evaluation_platform/significance.py"
+    ],
+    "skills/ai-reliability/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/architecture/systems/ai-reliability-platform.mdx",
+      "apps/handbook/src/content/docs/learn/modules/12-observability.mdx",
+      "apps/handbook/src/content/docs/build/labs/slo-driven-ai-operations.mdx",
+      "apps/handbook/src/content/docs/build/labs/evaluation-platform.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/incident-response.mdx"
+    ],
+    "skills/ai-system-design/SKILL.md": [
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-round.mdx",
+      "apps/handbook/src/content/docs/learn/modules/13-system-design.mdx",
+      "apps/handbook/src/content/docs/learn/modules/13-system-design.design-method.mmd",
+      "apps/handbook/src/content/docs/learn/modules/02-distributed-systems.mdx"
+    ],
+    "skills/ai-system-design/references/review-checklist.md": [
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-round.mdx",
+      "apps/handbook/src/content/docs/learn/modules/13-system-design.mdx"
+    ],
+    "skills/ai-system-design/references/capacity.md": [
+      "apps/handbook/src/content/docs/learn/modules/13-system-design.mdx",
+      "apps/handbook/src/content/docs/learn/modules/02-distributed-systems.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-round.mdx"
+    ],
+    "skills/ai-system-design/references/failure-thinking.md": [
+      "apps/handbook/src/content/docs/learn/modules/02-distributed-systems.mdx",
+      "apps/handbook/src/content/docs/learn/modules/13-system-design.mdx",
+      "apps/handbook/src/content/docs/cheatsheets/sheets/design-review.mdx"
+    ]
+  }
+}
