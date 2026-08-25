@@ -1,6 +1,6 @@
 {
   "handbookRepo": "https://github.com/vins13pattar/principal-ai-engineer-handbook",
-  "handbookSha": "f855322",
+  "handbookSha": "99f412ce3e24999fbaa545c1a7ddfad256b28a7e",
   "files": {
     "skills/agent-systems/SKILL.md": [
       "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
@@ -49,6 +49,7 @@
       "apps/handbook/src/content/docs/architecture/systems/async-ai-gateway.mdx"
     ],
     "skills/llm-gateway/references/patterns.md": [
+      "apps/handbook/src/content/docs/architecture/systems/async-ai-gateway.mdx",
       "labs/async-ai-gateway/src/ai_gateway/rate_limit.py",
       "labs/async-ai-gateway/src/ai_gateway/runtime.py",
       "labs/async-ai-gateway/src/ai_gateway/gateway.py",
