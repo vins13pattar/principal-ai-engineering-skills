@@ -112,7 +112,9 @@ overlap off into overlap of everything, doubling the index.
 
 Deliberately omitted: `_parse_blocks`, which flattens the document into
 `(heading, paragraph)` pairs, and the surrounding declarations of `chunks`,
-`position`, `current_heading`, and `current_text`.
+`position`, `current_heading`, and `current_text` — together with the
+`def chunk_document(...)` header that enclosed them, without which this does
+not compile as printed, since `nonlocal` needs an enclosing function to bind to.
 
 ## Reciprocal rank fusion
 

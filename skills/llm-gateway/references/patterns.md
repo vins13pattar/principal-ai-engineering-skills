@@ -164,7 +164,9 @@ path you have to write. And `release()` sits in `finally`, outside the timeout,
 so a cancelled request returns its slot.
 
 Deliberately omitted: the retry predicate is narrower than production needs —
-add HTTP 429 and 5xx, and never retry a 4xx.
+add HTTP 429 and 5xx, and never retry a 4xx. Also omitted is the enclosing
+`async def generate(...)` header, without which this does not compile as
+printed — `await` is only legal inside an async function.
 
 ## Circuit breaker with a single half-open probe
 
