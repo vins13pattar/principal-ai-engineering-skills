@@ -39,3 +39,23 @@ test("rejects a nested or list value", () => {
 test("rejects a tab-indented continuation", () => {
   assert.throws(() => parseFrontmatter("---\nname: a\n\tmore\n---\n"), /line 3/);
 });
+
+test("consumes every space after the colon, not just one", () => {
+  const { data } = parseFrontmatter("---\nname:   a\ndescription:\tb\n---\n");
+  assert.equal(data.name, "a");
+  assert.equal(data.description, "b");
+});
+
+test("closes on a fence carrying trailing whitespace", () => {
+  const { data, bodyStartLine } = parseFrontmatter("---\nname: a\n---  \n# Body\n");
+  assert.deepEqual(data, { name: "a" });
+  assert.equal(bodyStartLine, 4);
+});
+
+test("names CRLF line endings instead of blaming the opening fence", () => {
+  assert.throws(() => parseFrontmatter("---\r\nname: a\r\n---\r\n"), /CRLF/);
+});
+
+test("still rejects an indented fence", () => {
+  assert.throws(() => parseFrontmatter("  ---\nname: a\n---\n"), /line 1.*must open with ---/is);
+});

@@ -1,10 +1,11 @@
 # Patterns
 
-Excerpts trimmed to the load-bearing lines, each named with where it came from.
-Four are trimmed from the lab's `task_queue/` package and were verified by
-binding them over the originals and running the lab's own suite. The fourth is
-an adaptation, labelled as one, because the behaviour it shows is the change
-being argued for and the lab does not have it.
+Five excerpts, each named with the file it came from. Four are trimmed from the
+lab's `task_queue/` package and were verified by binding them over the originals
+and running the lab's own suite. The fourth below — "Lease renewal" — is an
+adaptation, labelled as one, because the behaviour it shows is the change being
+argued for and the lab does not have it. Where a printed comment is mine rather
+than the lab's, the excerpt's `Deliberately omitted:` line says so.
 
 One condition applies to all of them: the lab's store is in-memory and
 single-process. That is deliberate — it is written as a specification for what
@@ -45,14 +46,15 @@ Two properties of the index key are worth reading as decisions. It is
 `(queue, idempotency_key)`, so keys are namespaced by queue and **not** by
 tenant: put a tenant in that tuple, or one tenant's key collides with another's
 and returns its task. And the early return ignores the new `payload` and
-`max_attempts` entirely, so a client reusing a key with different content
-receives the first task and the first result — silently the wrong answer rather
-than a duplicate. Store a payload fingerprint beside the key and reject the
-conflict.
+`max_attempts`, so a client reusing a key with different content receives the
+first task and the first result — silently the wrong answer rather than a
+duplicate. Store a payload fingerprint beside the key and reject the conflict.
 
-Deliberately omitted: the class body and the declarations of `_lock`, `_tasks`,
-and `_idempotency_index`, without which this does not run as printed. The
-signature is reflowed onto fewer lines; the parameters are unchanged.
+Deliberately omitted: the `InMemoryTaskStore` header and class docstring, and
+the declarations of `_lock`, `_tasks`, and `_idempotency_index`, without which
+this does not run as printed; the method is de-indented to module level. The
+signature and the `Task(...)` call are both reflowed onto fewer lines, with no
+argument changed. No comment in this excerpt is mine — the original has none.
 
 ## The atomic claim, spending the budget on delivery
 
@@ -106,13 +108,17 @@ claim serializing under worker count.
 `leased_until`. A worker that computes its own deadline and sends it makes lease
 ownership a function of clock skew between workers.
 
-Deliberately omitted: as above, the class body and its attribute declarations.
+Deliberately omitted: as above, the class header, its docstring, and its
+attribute declarations; the method is de-indented to module level. The
+`candidates` generator and the `Lease(...)` call are reflowed onto fewer lines,
+with nothing changed but the line breaks. **The three trailing comments are
+mine.** `lease()` carries no comment in `store.py`, so do not go looking for
+them there.
 
 ## Fencing, and the reclaim that has no backoff
 
 From `store.py`. Serves "guard every lease-scoped write with the token and the
-deadline" — every one of `ack`, `fail`, `checkpoint`, and `heartbeat` routes
-through `_require_leased`.
+deadline" — `ack`, `fail`, `checkpoint`, `heartbeat` all route through it.
 
 ```python
 def _reclaim_expired_locked(self, queue: str, now: float) -> None:
@@ -139,20 +145,20 @@ Read the two together and the dependency appears: `_require_leased` never looks
 at `leased_until`, so a stale worker is fenced only once
 `_reclaim_expired_locked` has nulled its token — and that runs solely inside
 `lease()`. Verified by running it: a task leased for 0.05s still accepted a
-heartbeat *and* a checkpoint 0.20s later, and began raising only after a
-competing `lease()` reclaimed it. Add `AND leased_until > now()` to the guard
-and the dependency is gone.
+heartbeat *and* a checkpoint 0.20s later, and began raising only once a competing
+`lease()` reclaimed it. Add `AND leased_until > now()` and it is gone.
 
-Stranding is the other half. A task whose workers have all died stays `LEASED`,
-never `PENDING`, so neither queue depth nor oldest-pending age counts it and
-the backlog reads empty. Run reclaim off a path that needs no live poller.
+Stranding is the other half: a task whose workers have all died stays `LEASED`,
+so neither queue depth nor oldest-pending age counts it and the backlog reads
+empty. Run reclaim off a path that needs no live poller. And `available_at = now`
+makes the crash path visible instantly where `fail()` pushes it forward by
+backoff, so a worker-killing handler cycles at poll speed.
 
-`available_at = now` is the third thing: the crash path makes the task visible
-instantly where `fail()` pushes it forward by backoff, so a handler that kills
-its worker cycles at polling speed.
-
-Deliberately omitted: the class body, and the `errors` and `models` imports that
-`TaskNotFoundError`, `LeaseExpiredError`, and `TaskStatus` come from.
+Deliberately omitted: the class header and attribute declarations, and the
+`errors` and `models` imports; both methods are de-indented, and the `if` in
+`_reclaim_expired_locked` is reflowed from five lines to two. **The three
+comments inside it are mine, standing in for a four-line comment of the lab's**
+saying the same. `_require_leased` has no comment in the original or here.
 
 ## Lease renewal, off the work's own execution path
 
@@ -209,7 +215,8 @@ and every failure looks like a success. Whatever supervises this needs the
 exception to choose between ack and fail.
 
 Deliberately omitted: `asyncio` and the `task_queue` imports; and the ack/fail
-that follows, which must itself tolerate `LeaseExpiredError`.
+that follows, which must itself tolerate `LeaseExpiredError`. Every comment
+here is mine, necessarily — this function does not exist in the lab.
 
 ## Backoff, and the width of its jitter
 
@@ -244,6 +251,8 @@ breaking the `max_seconds` cap — measured at attempt 9, half the samples
 exceeded 60s, reaching 120s. Full jitter is `random.random() * capped`, a
 different expression rather than a parameter value.
 
-Deliberately omitted: `import random`.
+Deliberately omitted: `import random` and the `from __future__` line. The
+signature is reflowed from six lines to three, no default changed. The docstring
+is the lab's, verbatim; no comment in this excerpt is mine.
 
 **Source:** [Lab: Durable Agent Task Engine](https://handbook.vinodspattar.in/build/labs/durable-agent-task-engine/), [Architecture: Durable Agent Execution](https://handbook.vinodspattar.in/architecture/systems/durable-agent-execution/), [`labs/durable-agent-task-engine`](https://github.com/vins13pattar/principal-ai-engineer-handbook/tree/main/labs/durable-agent-task-engine)

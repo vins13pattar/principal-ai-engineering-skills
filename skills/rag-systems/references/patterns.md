@@ -1,9 +1,10 @@
 # Patterns
 
-Excerpts trimmed to the load-bearing lines, each named with where it came from.
-Four are adapted from the lab's `retrieval/` package; the first is from Module
-8's walkthrough, because the lab's own index takes no scope argument at all —
-its `search(self, query, *, k=5, fetch_k=20)` is single-tenant.
+Five excerpts, each named with the file it came from. Four are trimmed from the
+lab's `retrieval/` package; the first is from Module 8's walkthrough, because the
+lab's own index takes no scope argument at all — its
+`search(self, query, *, k=5, fetch_k=20)` is single-tenant. Where a printed
+comment is mine rather than the lab's, the `Deliberately omitted:` line says so.
 
 One condition applies to all of them: the lab's embedding function is
 deterministic feature hashing, not a model. It exercises the vector path and
@@ -95,26 +96,29 @@ flush()                                     # the tail is a chunk too
 The `pieces` guard is what "never split a paragraph unless it alone exceeds the
 budget" *means*: a paragraph that fits is one indivisible piece, so when adding
 it would overflow, the branch flushes the chunk being built and starts the new
-one with the whole paragraph — the cut lands between paragraphs, never inside
-one. Only a paragraph that cannot fit alone reaches `_split_long_paragraph`, and
-that splits on sentence boundaries rather than characters.
+one with the whole paragraph — the cut lands between paragraphs, never inside one.
+Only a paragraph that cannot fit alone reaches `_split_long_paragraph`, which
+splits on sentence boundaries rather than characters.
 
-The section-change `flush()` is the second invariant, and it is easy to delete
-as redundant because a later `flush()` would close the chunk anyway. It is not
-redundant: it zeroes `current_text`, which is the only reason the overlap branch
-cannot carry the tail of one section into the first chunk of the next, where it
-is pure noise in the embedding.
+The section-change `flush()` is the second invariant, easy to delete as
+redundant because a later `flush()` would close the chunk anyway. It is not: it
+zeroes `current_text`, the only reason the overlap branch cannot carry the tail
+of one section into the first chunk of the next, where it is pure noise.
 
 Watch `overlap_chars` if you compress this. `closing_text[-overlap_chars:]` with
 `overlap_chars = 0` is `closing_text[0:]` — the *entire* previous chunk, not an
-empty string — so folding the guarded line into the f-string silently turns
-overlap off into overlap of everything, doubling the index.
+empty string — so folding the guarded line into the f-string turns overlap off
+into overlap of everything, silently doubling the index.
 
 Deliberately omitted: `_parse_blocks`, which flattens the document into
-`(heading, paragraph)` pairs, and the surrounding declarations of `chunks`,
-`position`, `current_heading`, and `current_text` — together with the
-`def chunk_document(...)` header that enclosed them, without which this does
-not compile as printed, since `nonlocal` needs an enclosing function to bind to.
+`(heading, paragraph)` pairs, and the declarations of `chunks`, `position`,
+`current_heading`, and `current_text` — with the `def chunk_document(...)`
+header that enclosed them and its docstring, without which this does not compile,
+`nonlocal` needing an enclosing function to bind to. Edits: the body is
+de-indented one level; `chunks.append(...)` and `pieces = (...)` are reflowed;
+and the lab's `for heading, paragraph in blocks:` is printed with
+`_parse_blocks(text)` inlined, `blocks = ...` being one of the dropped
+declarations. **The three trailing comments are mine** — `chunking.py` has none.
 
 ## Reciprocal rank fusion
 
@@ -154,10 +158,24 @@ retrieved", and needs no model to do it.
 _CITATION_RE = re.compile(r"\[([\w\-#]+)\]")
 
 
-def check_groundedness(answer: str, retrieved_chunk_ids: frozenset[str]) -> frozenset[str]:
-    """Return the cited chunk IDs that were never actually retrieved."""
-    cited = frozenset(_CITATION_RE.findall(answer))
-    return cited - retrieved_chunk_ids
+def extract_citations(answer: str) -> frozenset[str]:
+    return frozenset(_CITATION_RE.findall(answer))
+
+
+@dataclass(frozen=True, slots=True)
+class GroundednessReport:
+    cited_chunk_ids: frozenset[str]
+    ungrounded_chunk_ids: frozenset[str]
+
+    @property
+    def is_fully_grounded(self) -> bool:
+        return not self.ungrounded_chunk_ids
+
+
+def check_groundedness(answer: str, retrieved_chunk_ids: frozenset[str]) -> GroundednessReport:
+    cited = extract_citations(answer)
+    ungrounded = cited - retrieved_chunk_ids
+    return GroundednessReport(cited_chunk_ids=cited, ungrounded_chunk_ids=ungrounded)
 ```
 
 Two set operations catch the crude failure — a citation pointing at a chunk ID
@@ -165,22 +183,32 @@ that was never in context, meaning the model invented the reference outright.
 Cheap enough to run on every answer, which is what makes it a usable production
 signal rather than an offline check.
 
-Deliberately omitted: whether the cited passage *supports* the claim beside it.
-That needs a model or a human; this is the free half. Also flattened — the lab
-returns a `GroundednessReport` carrying both the cited and the ungrounded sets,
-which is the better shape once you want to log what *was* grounded.
+The return type is the part to copy. `GroundednessReport` carries the cited set
+beside the ungrounded one, so the same call that fails an answer also tells you
+what *was* grounded — a bare set difference throws that half away and you
+rebuild it the first time you want to log a passing answer.
+
+Deliberately omitted: the module's `__future__` line and its `re` and
+`dataclasses` imports — the block compiles but does not import, `_CITATION_RE`
+raising `NameError` on `re` as the module body runs; and
+`check_groundedness`'s docstring, which states in prose what the first paragraph
+above states. No comment in this excerpt is mine — after that one deletion it
+carries none. Left out of scope rather than trimmed: whether the cited passage
+*supports* the claim beside it. That needs a model or a human; this is the free
+half.
 
 ## Retrieval metrics, per case and per run
 
-From `retrieval/evaluation.py`. Serves "ship a labelled evaluation set and fail
-CI on a regression": this is the detector for almost everything in
-`failure-modes.md`, and the last three lines are the numbers you threshold.
+From `retrieval/evaluation.py` — the body of `evaluate()`. Serves "ship a
+labelled evaluation set and fail CI on a regression", and the three means at the
+end are the numbers you threshold.
 
 ```python
-scored: list[tuple[float, float, float]] = []
-for case in cases:                        # case.relevant_chunk_ids is the label
+case_results = []
+for case in cases:
+    results = index.search(case.query, k=k)
+    retrieved_ids = tuple(result.chunk.id for result in results)
     relevant = case.relevant_chunk_ids
-    retrieved_ids = tuple(r.chunk.id for r in index.search(case.query, k=k))
 
     hits = [chunk_id for chunk_id in retrieved_ids if chunk_id in relevant]
     precision = len(hits) / len(retrieved_ids) if retrieved_ids else 0.0
@@ -191,31 +219,46 @@ for case in cases:                        # case.relevant_chunk_ids is the label
         if chunk_id in relevant:
             reciprocal_rank = 1.0 / rank
             break
-    scored.append((precision, recall, reciprocal_rank))
 
-count = len(scored) or 1                  # an empty case list must not divide by zero
-mean_precision_at_k = sum(p for p, _, _ in scored) / count
-mean_recall_at_k = sum(r for _, r, _ in scored) / count
-mean_reciprocal_rank = sum(rr for _, _, rr in scored) / count
+    case_results.append(
+        EvalCaseResult(
+            query=case.query,
+            retrieved_chunk_ids=retrieved_ids,
+            precision_at_k=precision,
+            recall_at_k=recall,
+            reciprocal_rank=reciprocal_rank,
+        )
+    )
+
+count = len(case_results) or 1
+return EvalReport(
+    case_results=tuple(case_results),
+    mean_precision_at_k=sum(r.precision_at_k for r in case_results) / count,
+    mean_recall_at_k=sum(r.recall_at_k for r in case_results) / count,
+    mean_reciprocal_rank=sum(r.reciprocal_rank for r in case_results) / count,
+)
 ```
 
 Report all three, because they fail apart. Precision asks how much of what came
-back was relevant, recall asks how much of what was relevant came back at all,
-and MRR asks how far down the list the first good result sat — a retriever can
-be precise and incomplete, or complete and noisy, and one number hides which.
+back was relevant, recall how much of what was relevant came back at all, and
+MRR how far down the list the first good result sat — a retriever can be precise
+and incomplete, or complete and noisy, and one number hides which.
 
 The per-case scores are for reading during an investigation; the three means are
 what a CI threshold compares. Stopping at the per-case loop is the common
-half-build, and it leaves rule 9 unimplementable — there is nothing to fail a
-build on.
+half-build, and it leaves "fail CI on a regression" unimplementable.
 
 Note the denominator: `precision` divides by results *returned*, not by `k`, so
-a retriever that returns two results and gets both right scores 1.0. That is the
-right choice for the metric and the wrong number to compare across runs with
-different result counts — pin `k` and the filter set before comparing anything.
+a retriever that returns two and gets both right scores 1.0 — right for the
+metric, wrong to compare across runs with different result counts. Pin `k` and
+the filter set before comparing anything.
 
 Deliberately omitted: the labelled set itself, which is the hard part and cannot
-be excerpted. Also the per-case record the lab keeps (`EvalCaseResult`, holding
-the retrieved IDs) — means alone tell you a run regressed, never which query.
+be excerpted; the `def evaluate(...)` header and its docstring, whose content is
+the first paragraph above; and the module's imports and the `EvalCase`,
+`EvalCaseResult`, and `EvalReport` dataclasses. The body is de-indented one
+level, which leaves a `return` at module level, so this does not compile as
+printed. Nothing else is changed and no comment in it is mine — `evaluation.py`
+carries none.
 
 **Source:** [Lab: Hybrid Retrieval and Evaluation](https://handbook.vinodspattar.in/build/labs/hybrid-retrieval/), [Module 8: RAG](https://handbook.vinodspattar.in/learn/modules/08-rag/), [`labs/hybrid-retrieval`](https://github.com/vins13pattar/principal-ai-engineer-handbook/tree/main/labs/hybrid-retrieval)
