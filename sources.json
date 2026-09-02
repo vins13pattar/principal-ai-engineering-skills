@@ -1,6 +1,6 @@
 {
   "handbookRepo": "https://github.com/vins13pattar/principal-ai-engineer-handbook",
-  "handbookSha": "99f412ce3e24999fbaa545c1a7ddfad256b28a7e",
+  "handbookSha": "ce99dd27341a67582eb658dbe60e3a7a416818b5",
   "files": {
     "skills/agent-systems/SKILL.md": [
       "apps/handbook/src/content/docs/architecture/systems/durable-agent-execution.mdx",
@@ -122,6 +122,7 @@
     ],
     "skills/agent-authorization/references/failure-modes.md": [
       "apps/handbook/src/content/docs/architecture/systems/policy-gated-tool-execution.mdx",
+      "apps/handbook/src/content/docs/learn/modules/12-observability.mdx",
       "apps/handbook/src/content/docs/learn/modules/15-agent-identity.mdx",
       "apps/handbook/src/content/docs/build/labs/policy-gated-tool-runtime.mdx",
       "apps/handbook/src/content/docs/build/labs/agent-identity-broker.mdx",

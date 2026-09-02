@@ -112,30 +112,39 @@ Stop and comment at the first failing answer in that section.
     nothing in the accuracy number reveals it. Averaging repeats hides
     instability behind a plausible number instead of naming the examples.
 
+16. **Does the evaluation gate report what it discovered and executed, or only
+    that it passed?** *Failing answer:* the job is green and says nothing else.
+    A run that skipped every case and a run that passed every case emit an
+    identical signal, so green is evidence only when it can show which checks
+    ran and over what. Ask for discovered, executed, and skipped in the log, and
+    for a build that fails on zero discovered. Then the question specific to
+    agent-written changes: did this commit touch the checking mechanism as well
+    as the implementation, and was that reviewed as its own change?
+
 ## Cost — last but always
 
-16. **Is telemetry retention at least the longest burn-rate window?** *Failing
+17. **Is telemetry retention at least the longest burn-rate window?** *Failing
     answer:* nobody checked. The longest window sets retention and query cost,
     and a rule whose window exceeds retention evaluates silently on truncated
     data — an alert that cannot fire and looks configured.
 
-17. **What was traded to afford the quality SLI's cadence?** *Failing answer:*
+18. **What was traded to afford the quality SLI's cadence?** *Failing answer:*
     the eval set was shrunk, with no one re-checking what it can still detect.
     Cadence and set size are the two knobs and they trade against different
     things: cadence buys detection delay, size buys resolution.
 
 ## Observability — last but always
 
-18. **When an alert fires, does it carry both window rates and the threshold?**
+19. **When an alert fires, does it carry both window rates and the threshold?**
     *Failing answer:* the verdict only. An alert that cannot be reconstructed
     afterwards gets argued about instead of debugged, and the argument recurs.
 
-19. **Is a scaling decision's reason recorded alongside its action?** *Failing
+20. **Is a scaling decision's reason recorded alongside its action?** *Failing
     answer:* the action and the replica count. Proportional target, cooldown
     hold, and fast-burn override are three different events that look identical
     as "scaled to 6", and post-incident review needs to tell them apart.
 
-20. **Are time-to-detect and time-to-escalate measured?** *Failing answer:*
+21. **Are time-to-detect and time-to-escalate measured?** *Failing answer:*
     neither. They are the two intervals this automation exists to compress and
     the only evidence that it does.
 

@@ -60,6 +60,38 @@ case: burn rate over a lookback with no requests in it is zero, so a service
 that has stopped receiving traffic entirely reports healthy on every window at
 once.
 
+## A green gate that never ran the check
+
+**Presents as:** confidence. The evaluation job is green, the quality number
+has not moved in weeks, and the regression reaches you through a user or a
+downstream metric. Nothing failed, because nothing ran.
+
+**Cause:** exit code 0 is one claim where four are needed — that the check
+succeeded, that it actually executed, that it covered the scope you believed,
+and that unexpected skips were surfaced rather than swallowed. A process that
+considered itself successful is not one that discovered any cases, aimed at the
+artifact you changed, or ran the suite it skipped because a dependency was
+unreachable. The asymmetry is what keeps it alive: a red gate is looked at
+within minutes because someone is blocked, and a false green is looked at by
+nobody, so the outcome most in need of scrutiny is the one wearing the colour
+of success. It sharpens under AI-assisted development, where an agent can
+change test discovery, a path filter, or a workflow condition as a side effect
+of the change it was asked to make, and then report success on the evidence the
+gate handed it.
+
+**Do:** make the gate report scope rather than verdict — discovered, executed,
+and skipped, printed on every run whether or not that run fails, because a
+reviewer comparing `discovered=19` against last week's `discovered=4` learns
+something no threshold encodes. Fail on zero discovered, which is the check
+that never needs tuning; a count floor is one invariant among several, not the
+answer. Treat an unexpected skip as something to look at rather than a pass,
+since an unreachable dependency hollows a suite out one individually green skip
+at a time. Run lint, typecheck, unit, and integration as independently visible
+jobs, so one swallowed failure cannot cover for the others. And when a change
+touches both an implementation and the mechanism that checks it, those are two
+changes: **validate the validator**, or a weakened gate ships in the same commit
+as the code it existed to catch.
+
 ## Utilization-only scaling that cannot see why load is high
 
 **Presents as:** an autoscaler that responds correctly to load and makes the
