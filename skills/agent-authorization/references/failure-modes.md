@@ -2,7 +2,7 @@
 
 Symptom first, because that is what you have when someone reports it. The first
 two are how an unauthorized call happens; the middle two are how a control
-turns into an outage; the last two are how you fail to find out. Ordered by
+turns into an outage; the last three are how you fail to find out. Ordered by
 what the failure costs.
 
 ## Trusting the schema the model was given
@@ -107,6 +107,35 @@ defect when nobody noticed the two keys differ. In more than one replica the
 bucket has to be shared atomic state; in-process buckets multiply every limit
 by the replica count, which means the number in the config was never the limit.
 
+## An approval that outlived what it approved
+
+**Presents as:** nothing, which is the point. A tool still shows
+`human-approved`, `security-reviewed`, or `evaluation-passed`, the review
+genuinely happened, and the thing it approved has since changed underneath the
+label. The first evidence is an incident nobody can explain, because every
+control involved reported green.
+
+**Cause:** the approval was recorded as a permanent property rather than as
+dated evidence about a specific artifact. This is the same defect as a gate that
+never ran its checks, one layer up — the label no longer describes reality and
+nothing in the system is required to notice. In an agent setting most controls
+are time-sensitive by nature: an approval, a red-team pass, a prompt review, and
+an eval result are all evidence about a particular model version, prompt
+version, toolset, and policy, and an agent that swaps any one of them has not
+inherited the approval, it has voided it.
+
+**Do:** bind an approval to what was reviewed — the versions of the model,
+prompt, tool schema, and policy — so that changing any of them invalidates it
+instead of carrying it forward. Give every such control five answers: who owns
+it, how long its evidence is trusted, what makes it stale, what restores it, and
+what happens when it lapses. The last is the one usually left undefined, which
+is how expiry silently resolves to "carry on"; expiry must produce a distinct
+state, so `approved` becomes `review-expired` and the next call asks for
+revalidation rather than reading the old answer. Fail closed where the expired
+control guards something irreversible and warn where it does not — a gate that
+blocks everything on lapse gets routed around, and one that blocks nothing was
+never a gate.
+
 ## An audit log that records only successes
 
 **Presents as:** nothing, until an incident. Then the question is "what did
@@ -160,4 +189,4 @@ disabling it makes exactly six tests fail across three files — a number worth
 knowing precisely because a security test that has never failed is
 indistinguishable from one that cannot.
 
-**Source:** [Architecture: Policy-Gated Tool Execution](https://handbook.vinodspattar.in/architecture/systems/policy-gated-tool-execution/), [Module 15: Agent Identity and Access](https://handbook.vinodspattar.in/learn/modules/15-agent-identity/), [Lab: Policy-Gated Tool Runtime](https://handbook.vinodspattar.in/build/labs/policy-gated-tool-runtime/), [Lab: Agent Identity Broker](https://handbook.vinodspattar.in/build/labs/agent-identity-broker/), [`labs/policy-gated-tool-runtime`](https://github.com/vins13pattar/principal-ai-engineer-handbook/tree/main/labs/policy-gated-tool-runtime) (`audit.py`, `rate_limit.py`, and the `ToolSpec` defaults in `models.py`)
+**Source:** [Architecture: Policy-Gated Tool Execution](https://handbook.vinodspattar.in/architecture/systems/policy-gated-tool-execution/), [Module 15: Agent Identity and Access](https://handbook.vinodspattar.in/learn/modules/15-agent-identity/), [Module 12: Observability](https://handbook.vinodspattar.in/learn/modules/12-observability/), [Lab: Policy-Gated Tool Runtime](https://handbook.vinodspattar.in/build/labs/policy-gated-tool-runtime/), [Lab: Agent Identity Broker](https://handbook.vinodspattar.in/build/labs/agent-identity-broker/), [`labs/policy-gated-tool-runtime`](https://github.com/vins13pattar/principal-ai-engineer-handbook/tree/main/labs/policy-gated-tool-runtime) (`audit.py`, `rate_limit.py`, and the `ToolSpec` defaults in `models.py`)
