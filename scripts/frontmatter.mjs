@@ -6,11 +6,30 @@ const FENCE = /^---[ \t]*$/;
 // to yield " value", a leading space that then travelled silently into the
 // name or description.
 const PAIR = /^([a-z][a-zA-Z0-9_]*):[ \t]+(.*\S)[ \t]*$/;
+// Constructs a real YAML parser reads DIFFERENTLY from the regex above. This
+// parser is narrower than YAML in what shapes it allows, but it was silently
+// WIDER in what it accepted inside a value, which is the dangerous direction:
+// every actual consumer (skills.sh, Claude Code, Codex, Cursor) parses real
+// YAML, so a value this accepts and YAML rejects installs nowhere. That
+// shipped once — a description containing "provider-SDK skill: SDK retry
+// settings" passed every gate here and was skipped at install with "Nested
+// mappings are not allowed in compact mappings".
+//
+// Hand-rolled rather than delegated to js-yaml on purpose: CI runs
+// `npm run check` on a clean clone with no `npm install`, so this file must
+// have no dependencies.
+const YAML_HOSTILE = [
+  [/:[ \t]/, 'a colon followed by a space — YAML reads the rest as a nested mapping; use an em dash'],
+  [/:$/, "a trailing colon — YAML reads the value as a mapping key"],
+  [/[ \t]#/, "a space before # — YAML starts a comment there"],
+  [/^[-?:,[\]{}#&*!|>'"%@`]/, "a leading YAML indicator character; rephrase so it starts with a letter"],
+];
 
 /**
  * Parse a strict, flat frontmatter block. Deliberately narrower than YAML:
  * only `key: value` pairs are legal, so a skill cannot grow structure the
- * skills.sh indexer would not read.
+ * skills.sh indexer would not read. Values are additionally checked against
+ * YAML_HOSTILE so this parser never accepts a value real YAML would reject.
  */
 export function parseFrontmatter(text) {
   const lines = text.split("\n");
@@ -40,6 +59,12 @@ export function parseFrontmatter(text) {
     const [, key, value] = match;
     if (Object.hasOwn(data, key)) {
       throw new Error(`line ${humanLine}: duplicate key ${JSON.stringify(key)}`);
+    }
+    const hostile = YAML_HOSTILE.find(([pattern]) => pattern.test(value));
+    if (hostile) {
+      throw new Error(
+        `line ${humanLine}: ${key} contains ${hostile[1]}. A real YAML parser would reject this file, so the skill would not install.`,
+      );
     }
     data[key] = value;
   }

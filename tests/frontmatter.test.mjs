@@ -15,9 +15,26 @@ test("ignores blank lines inside the block", () => {
   assert.deepEqual(data, { name: "a", description: "b" });
 });
 
-test("keeps colons that appear in the value", () => {
-  const { data } = parseFrontmatter("---\nname: a\ndescription: Use when: retries\n---\n");
-  assert.equal(data.description, "Use when: retries");
+// This test used to assert the opposite — that a colon-space in a value was
+// kept verbatim. That "feature" is what let llm-gateway ship a description
+// real YAML could not parse, so the skill was skipped at install while every
+// gate here stayed green. The parser must never accept what YAML rejects.
+test("rejects a colon-space in a value, which YAML reads as a nested mapping", () => {
+  assert.throws(
+    () => parseFrontmatter("---\nname: a\ndescription: Use when: retries\n---\n"),
+    /line 3.*colon followed by a space.*would not install/is,
+  );
+});
+
+test("keeps a colon that is not followed by a space", () => {
+  const { data } = parseFrontmatter("---\nname: a\ndescription: Use when ratio a:b matters\n---\n");
+  assert.equal(data.description, "Use when ratio a:b matters");
+});
+
+test("rejects the other constructs YAML reads differently", () => {
+  assert.throws(() => parseFrontmatter("---\nname: a\nd: trailing colon:\n---\n"), /trailing colon/i);
+  assert.throws(() => parseFrontmatter("---\nname: a\nd: text #comment\n---\n"), /starts a comment/i);
+  assert.throws(() => parseFrontmatter("---\nname: a\nd: *anchor here\n---\n"), /indicator character/i);
 });
 
 test("rejects a file that does not open with a fence", () => {

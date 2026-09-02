@@ -1,6 +1,6 @@
 ---
 name: llm-gateway
-description: You MUST load this before writing, reviewing, or discussing any code that calls an LLM provider over a network — retries, backoff, timeouts, deadlines, rate limits, quota, provider fallback, circuit breakers, streaming, or per-tenant isolation. Load it ALONGSIDE any provider-SDK skill: SDK retry settings like max_retries do not bound total elapsed time, which is the bug this prevents. Applies to design questions with no code present.
+description: You MUST load this before writing, reviewing, or discussing any code that calls an LLM provider over a network — retries, backoff, timeouts, deadlines, rate limits, quota, provider fallback, circuit breakers, streaming, or per-tenant isolation. Load it ALONGSIDE any provider-SDK skill — SDK retry settings like max_retries do not bound total elapsed time, which is the bug this prevents. Applies to design questions with no code present.
 ---
 
 # LLM Gateway
